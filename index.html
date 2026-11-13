@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#161614" media="(prefers-color-scheme: dark)">
-<meta name="sn-form-url" content="https://script.google.com/macros/s/AKfycbxFRNLG64_Yv4BugfR1kGci6TGvgKOZzU2DgstXecbUUTLNtJ_q91tEuyzG3uy6EZ8-/exec">
+<meta name="sn-form-url" content="https://script.google.com/macros/s/AKfycbw36Zf1ygzx2dpd17DuEEIsj4LdaiEOZXh56BKrJgIai8vajqtxChO9e-qRTJCNQflc/exec">
 <title>sn_non-planar · Impresión no planar en Blender para Bambu Lab</title>
 <style>
 :root{
@@ -57,6 +57,7 @@ form.join[hidden]{display:none}
 .join-msg{margin-top:14px;font-weight:600}
 .hero-txt .join-msg{order:5}   /* en celular el hero se reordena: el mensaje va donde estaba el formulario */
 .join-msg.err{color:var(--acc)}
+.join-msg a{color:var(--acc);font-weight:700}
 
 /* printers strip */
 .strip{padding:28px 0;border-top:1px solid var(--line)}
@@ -459,43 +460,75 @@ body{overflow-x:clip}
 // Formulario de la lista: manda el mail al Apps Script (URL en <meta name="sn-form-url">)
 (function(){
   const meta = document.querySelector('meta[name="sn-form-url"]');
+  // errores de tipeo comunes en el dominio → sugerencia "¿Quisiste decir…?"
+  const TYPOS = {
+    'gmial.com':'gmail.com','gmal.com':'gmail.com','gmai.com':'gmail.com','gamil.com':'gmail.com','gnail.com':'gmail.com',
+    'gmaill.com':'gmail.com','gmail.co':'gmail.com','gmail.con':'gmail.com','gmail.cm':'gmail.com','gmail.om':'gmail.com',
+    'gmail.com.ar':'gmail.com','gmail.es':'gmail.com','gimail.com':'gmail.com','gmsil.com':'gmail.com',
+    'hotmial.com':'hotmail.com','hotmal.com':'hotmail.com','hotmai.com':'hotmail.com','hotamil.com':'hotmail.com',
+    'hotmail.con':'hotmail.com','hotmail.co':'hotmail.com','hotmil.com':'hotmail.com','homail.com':'hotmail.com',
+    'hotmial.com.ar':'hotmail.com.ar','hotmail.com.ra':'hotmail.com.ar',
+    'outlok.com':'outlook.com','outllok.com':'outlook.com','outlook.con':'outlook.com','oulook.com':'outlook.com',
+    'yaho.com':'yahoo.com','yahooo.com':'yahoo.com','yhoo.com':'yahoo.com','yahoo.con':'yahoo.com','yaho.com.ar':'yahoo.com.ar',
+    'icloud.con':'icloud.com','iclod.com':'icloud.com','icoud.com':'icloud.com','live.con':'live.com'
+  };
+  const sugerir = email => {
+    const [u, d] = email.toLowerCase().split('@');
+    return d && TYPOS[d] ? u + '@' + TYPOS[d] : '';
+  };
+  const OK_MSG = '¡Casi listo! Te mandé un mail para confirmar. Revisá tu bandeja de entrada (y la carpeta de spam).';
+
   document.querySelectorAll('form[data-sn-form]').forEach(form => {
+    const btn = form.querySelector('button');
+    const msg = () => {
+      let m = form.nextElementSibling;
+      if(!m || !m.classList.contains('join-msg')){ m = document.createElement('p'); m.className = 'join-msg'; form.after(m); }
+      return m;
+    };
+    const say = (txt, err) => { const m = msg(); m.textContent = txt; m.classList.toggle('err', !!err); };
+    const volver = txt => { form.hidden = false; btn.disabled = false; say(txt, true); };
+
     form.addEventListener('submit', e => {
       e.preventDefault();
       if(document.body.classList.contains('sn-edit')) return;   // en modo edición no se envía
       const url = meta && meta.content.trim();
       const email = form.email.value.trim();
-      const btn = form.querySelector('button');
-      const say = (txt, err) => {
-        let m = form.nextElementSibling;
-        if(!m || !m.classList.contains('join-msg')){ m = document.createElement('p'); m.className = 'join-msg'; form.after(m); }
-        m.textContent = txt; m.classList.toggle('err', !!err);
-      };
       if(!url){ say('El formulario todavía no está conectado.', true); return; }
-      // El "Listo" se muestra al instante (Google tarda ~3 s). De fondo se envía y se LEE la respuesta del script
-      // (Google permite leerla: Access-Control-Allow-Origin *). Si no confirma que guardó, reintenta hasta 3 veces;
-      // si igual falla, vuelve el formulario con un aviso.
+
+      // ¿error de tipeo? se pregunta una vez; si la persona vuelve a enviar igual, se respeta
+      const s = sugerir(email);
+      if(s && form.dataset.preguntado !== email){
+        form.dataset.preguntado = email;
+        const m = msg(); m.classList.remove('err'); m.textContent = '¿Quisiste decir ';
+        const b = document.createElement('a'); b.href = '#'; b.textContent = s;
+        b.addEventListener('click', ev => { ev.preventDefault(); form.email.value = s; form.requestSubmit(); });
+        m.append(b, '? Si tu mail está bien así, tocá el botón otra vez.');
+        return;
+      }
+
+      // El mensaje se muestra al instante (Google tarda ~3 s). De fondo se envía y se LEE la respuesta del script
+      // (Google permite leerla: Access-Control-Allow-Origin *). Si no confirma que guardó, reintenta hasta 3 veces.
       btn.disabled = true;
       form.hidden = true;
-      say('¡Listo! Ya estás en la lista. Te escribo cuando salga.');
+      say(OK_MSG);
       const datos = new URLSearchParams({email, origen: form.dataset.origen || 'landing',
         pagina: location.href, sitio_web: form.sitio_web.value});
       (async () => {
         for(let intento = 1; intento <= 3; intento++){
           try{
-            const r = await fetch(url, {method:'POST', body:datos, keepalive: intento === 1});   // reintentos sin keepalive, por si ese era el problema
+            const r = await fetch(url, {method:'POST', body:datos, keepalive: intento === 1});   // reintentos sin keepalive
             const d = await r.json();
-            if(d.ok) return;
-            if(d.mensaje === 'email inválido'){
-              form.hidden = false; btn.disabled = false;
-              say('Ese mail no parece válido. Revisalo y probá de nuevo.', true);
+            if(d.ok){
+              if(d.mensaje === 'ya confirmado') say('¡Ya estabas en la lista y confirmado! Te escribo cuando salga.');
               return;
             }
+            if(d.mensaje === 'email inválido') return volver('Ese mail no parece válido. Revisalo y probá de nuevo.');
+            if(d.mensaje === 'temporal') return volver('Ese es un mail temporal. Usá el tuyo de siempre, así te puedo avisar del lanzamiento.');
+            if(d.mensaje === 'muchos') return volver('Hay mucha gente anotándose en este momento. Probá de nuevo en un minuto.');
           }catch(err){}
           await new Promise(res => setTimeout(res, 1500 * intento));
         }
-        form.hidden = false; btn.disabled = false;
-        say('No se pudo anotar. Revisá tu conexión y probá de nuevo.', true);
+        volver('No se pudo anotar. Revisá tu conexión y probá de nuevo.');
       })();
     });
   });

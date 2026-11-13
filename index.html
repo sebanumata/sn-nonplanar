@@ -58,6 +58,21 @@ form.join[hidden]{display:none}
 .hero-txt .join-msg{order:5}   /* en celular el hero se reordena: el mensaje va donde estaba el formulario */
 .join-msg.err{color:var(--acc)}
 .join-msg a{color:var(--acc);font-weight:700}
+/* cuadro "Revisá tu mail" después de anotarse */
+dialog.aviso{border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);padding:34px 30px 28px;
+  width:min(440px,calc(100vw - 32px));text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+dialog.aviso::backdrop{background:rgba(10,10,9,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+dialog.aviso[open]{animation:aviso-in .22s ease-out}
+@keyframes aviso-in{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.aviso-ico{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
+.aviso h3{font-size:28px;margin:0 0 10px}
+.aviso p{color:var(--mut);margin:0 0 6px}
+.aviso p b{color:var(--ink);overflow-wrap:anywhere}
+.aviso .aviso-spam{font-size:14px;margin-top:12px}
+.aviso .btn{display:block;width:100%;margin-top:22px;min-height:50px}
+.aviso .aviso-cerrar{display:block;width:100%;margin-top:8px;background:none;border:0;color:var(--mut);font:inherit;font-size:15px;
+  padding:10px;cursor:pointer;text-decoration:underline}
 
 /* printers strip */
 .strip{padding:28px 0;border-top:1px solid var(--line)}
@@ -478,6 +493,54 @@ body{overflow-x:clip}
   };
   const OK_MSG = '¡Casi listo! Te mandé un mail para confirmar. Revisá tu bandeja de entrada (y la carpeta de spam).';
 
+  // Cuadro "Revisá tu mail": se abre al anotarse, con un botón a la casilla de la persona si es un servicio conocido.
+  const BUZONES = [
+    [/^(gmail|googlemail)\.com$/, 'Gmail', 'https://mail.google.com/mail/u/0/#search/in%3Aanywhere+%22sn_non-planar%22'],
+    [/^(hotmail|outlook|live|msn)\.(com|es|com\.ar)$/, 'Outlook', 'https://outlook.live.com/mail/0/'],
+    [/^(yahoo|ymail)\.(com|es|com\.ar)$/, 'Yahoo Mail', 'https://mail.yahoo.com/'],
+    [/^(icloud|me|mac)\.com$/, 'iCloud Mail', 'https://www.icloud.com/mail'],
+    [/^(proton\.me|protonmail\.com)$/, 'Proton Mail', 'https://mail.proton.me/']
+  ];
+  const ICONO = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
+  let aviso = null;
+  const cerrarAviso = () => { if(aviso){ aviso.close(); aviso.remove(); aviso = null; } };
+  const abrirAviso = (email, confirmado) => {
+    cerrarAviso();
+    const dom = email.split('@')[1].toLowerCase();
+    const buzon = BUZONES.find(b => b[0].test(dom));
+    aviso = document.createElement('dialog');
+    aviso.className = 'aviso';
+    aviso.setAttribute('aria-labelledby', 'aviso-tit');
+    const h = document.createElement('h3'); h.id = 'aviso-tit';
+    const p1 = document.createElement('p');
+    const ico = document.createElement('div'); ico.className = 'aviso-ico'; ico.innerHTML = ICONO;
+    aviso.append(ico, h, p1);
+    if(confirmado){
+      h.textContent = '¡Ya estás en la lista!';
+      p1.textContent = 'Ese mail ya estaba confirmado. Te escribo cuando salga, el 12 de diciembre de 2026.';
+    }else{
+      h.textContent = '¡Revisá tu mail!';
+      const b = document.createElement('b'); b.textContent = email;
+      p1.append('Te mandé un mail a ', b, '. Tocá el botón ', Object.assign(document.createElement('b'), {textContent:'Confirmar mi mail'}), ' y listo.');
+      const p2 = document.createElement('p'); p2.className = 'aviso-spam';
+      p2.textContent = 'Si no lo ves en unos minutos, buscalo en spam o en promociones.';
+      aviso.append(p2);
+      if(buzon){
+        const a = document.createElement('a'); a.className = 'btn'; a.href = buzon[2];
+        a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Abrir ' + buzon[1];
+        aviso.append(a);
+      }
+    }
+    const x = document.createElement('button'); x.type = 'button'; x.className = 'aviso-cerrar';
+    x.textContent = (buzon && !confirmado) ? 'Cerrar' : 'Entendido';
+    x.addEventListener('click', cerrarAviso);
+    aviso.append(x);
+    aviso.addEventListener('click', ev => { if(ev.target === aviso) cerrarAviso(); });   // click afuera cierra
+    aviso.addEventListener('cancel', ev => { ev.preventDefault(); cerrarAviso(); });   // Esc cierra
+    document.body.append(aviso);
+    aviso.showModal();
+  };
+
   document.querySelectorAll('form[data-sn-form]').forEach(form => {
     const btn = form.querySelector('button');
     const msg = () => {
@@ -486,7 +549,7 @@ body{overflow-x:clip}
       return m;
     };
     const say = (txt, err) => { const m = msg(); m.textContent = txt; m.classList.toggle('err', !!err); };
-    const volver = txt => { form.hidden = false; btn.disabled = false; say(txt, true); };
+    const volver = txt => { cerrarAviso(); form.hidden = false; btn.disabled = false; say(txt, true); };
 
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -511,6 +574,7 @@ body{overflow-x:clip}
       btn.disabled = true;
       form.hidden = true;
       say(OK_MSG);
+      abrirAviso(email);
       const datos = new URLSearchParams({email, origen: form.dataset.origen || 'landing',
         pagina: location.href, sitio_web: form.sitio_web.value});
       (async () => {
@@ -519,7 +583,7 @@ body{overflow-x:clip}
             const r = await fetch(url, {method:'POST', body:datos, keepalive: intento === 1});   // reintentos sin keepalive
             const d = await r.json();
             if(d.ok){
-              if(d.mensaje === 'ya confirmado') say('¡Ya estabas en la lista y confirmado! Te escribo cuando salga.');
+              if(d.mensaje === 'ya confirmado'){ say('¡Ya estabas en la lista y confirmado! Te escribo cuando salga.'); if(aviso) abrirAviso(email, true); }
               return;
             }
             if(d.mensaje === 'email inválido') return volver('Ese mail no parece válido. Revisalo y probá de nuevo.');

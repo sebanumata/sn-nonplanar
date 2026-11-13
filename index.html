@@ -5,12 +5,18 @@
 <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#161614" media="(prefers-color-scheme: dark)">
 <meta name="sn-form-url" content="https://script.google.com/macros/s/AKfycbw36Zf1ygzx2dpd17DuEEIsj4LdaiEOZXh56BKrJgIai8vajqtxChO9e-qRTJCNQflc/exec">
+<link rel="preload" href="fonts/google-sans-latin-normal.woff2" as="font" type="font/woff2" crossorigin>
 <title>sn_non-planar · Impresión no planar en Blender para Bambu Lab</title>
 <style>
+/* Google Sans (SIL OFL 1.1, ver fonts/OFL.txt), incluida en la web para que se vea igual en todos los dispositivos */
+@font-face{font-family:'Google Sans';font-style:italic;font-weight:400 700;font-display:swap;src:url(fonts/google-sans-latin-ext-italic.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Google Sans';font-style:italic;font-weight:400 700;font-display:swap;src:url(fonts/google-sans-latin-italic.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Google Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/google-sans-latin-ext-normal.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Google Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/google-sans-latin-normal.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 :root{
   --bg:#f4f3ef; --card:#fff; --ink:#1d1d1b; --mut:#6b6a64; --line:#dedcd4; --acc:#c2410c; --acc-ink:#fff;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
-  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Google Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --sans:"Google Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme:dark){
   :root{--bg:#161614; --card:#21211e; --ink:#eceae4; --mut:#9b998f; --line:#34332e; --acc:#fb923c; --acc-ink:#161614}

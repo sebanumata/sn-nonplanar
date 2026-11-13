@@ -254,14 +254,15 @@ body{overflow-x:clip}
 
 .lang{margin-left:auto;margin-right:12px;display:flex;gap:2px;font-size:13px;font-weight:600;letter-spacing:.04em}.lang a{color:var(--mut);text-decoration:none;padding:6px 7px;border-radius:8px}.lang a:hover{color:var(--ink)}.lang a[aria-current]{color:var(--ink);background:var(--card)}header .logo{white-space:nowrap}@media (max-width:600px){.lang{margin-right:8px;font-size:12px}.lang a{padding:5px 5px}}
 </style>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="47abc882-46cf-43f9-bfaf-ce4189b0ebf0" data-domains="sebanumata.github.io"></script>
 </head>
 <body>
 
 <header>
   <div class="wrap">
     <div class="logo">sn_<b>non-planar</b></div>
-    <nav class="lang" aria-label="Idioma / Language"><a href="../" hreflang="es" lang="es" onclick="try{localStorage.setItem(&quot;sn-lang&quot;,&quot;es&quot;)}catch(e){}">ES</a><a href="./" hreflang="en" lang="en" aria-current="true" onclick="try{localStorage.setItem(&quot;sn-lang&quot;,&quot;en&quot;)}catch(e){}">EN</a><a href="../pt/" hreflang="pt" lang="pt" onclick="try{localStorage.setItem(&quot;sn-lang&quot;,&quot;pt&quot;)}catch(e){}">PT</a></nav>
-    <a class="btn" href="#anotate">I want it!</a>
+    <nav class="lang" aria-label="Idioma / Language"><a href="../" hreflang="es" lang="es" data-umami-event="cambiar-idioma" data-umami-event-a="es" onclick="try{localStorage.setItem(&quot;sn-lang&quot;,&quot;es&quot;)}catch(e){}">ES</a><a href="./" hreflang="en" lang="en" aria-current="true" data-umami-event="cambiar-idioma" data-umami-event-a="en" onclick="try{localStorage.setItem(&quot;sn-lang&quot;,&quot;en&quot;)}catch(e){}">EN</a><a href="../pt/" hreflang="pt" lang="pt" data-umami-event="cambiar-idioma" data-umami-event-a="pt" onclick="try{localStorage.setItem(&quot;sn-lang&quot;,&quot;pt&quot;)}catch(e){}">PT</a></nav>
+    <a class="btn" href="#anotate" data-umami-event="boton-lo-quiero" data-umami-event-lugar="encabezado">I want it!</a>
   </div>
 </header>
 
@@ -475,7 +476,7 @@ body{overflow-x:clip}
 <!-- barra fija abajo, solo en celular -->
 <div class="mbar" id="sn-mbar">
   <p class="mbar-txt">50% OFF for the list · out on 12.12</p>
-  <a class="btn" href="#anotate">I want it!</a>
+  <a class="btn" href="#anotate" data-umami-event="boton-lo-quiero" data-umami-event-lugar="barra-celular">I want it!</a>
 </div>
 
 <footer>
@@ -576,6 +577,8 @@ body{overflow-x:clip}
     }
   }[IDIOMA];
   const OK_MSG = M.ok;
+  // Estadísticas (Umami): solo cuenta si el script de Umami está en la página (lo agrega publicar.py en la web publicada)
+  const evento = (nombre, datos) => { try{ if(window.umami) window.umami.track(nombre, Object.assign({idioma: IDIOMA}, datos || {})); }catch(e){} };
 
   // Cuadro "Revisá tu mail": se abre al anotarse, con un botón a la casilla de la persona si es un servicio conocido.
   const BUZONES = [
@@ -612,6 +615,7 @@ body{overflow-x:clip}
       if(buzon){
         const a = document.createElement('a'); a.className = 'btn'; a.href = buzon[2];
         a.target = '_blank'; a.rel = 'noopener'; a.textContent = M.abrir + buzon[1];
+        a.addEventListener('click', () => evento('abrir-buzon', {buzon: buzon[1]}));
         aviso.append(a);
       }
     }
@@ -646,6 +650,7 @@ body{overflow-x:clip}
       const s = sugerir(email);
       if(s && form.dataset.preguntado !== email){
         form.dataset.preguntado = email;
+        evento('sugerencia-tipeo', {formulario: form.dataset.origen});
         const m = msg(); m.classList.remove('err'); m.textContent = M.typo1;
         const b = document.createElement('a'); b.href = '#'; b.textContent = s;
         b.addEventListener('click', ev => { ev.preventDefault(); form.email.value = s; form.requestSubmit(); });
@@ -655,6 +660,7 @@ body{overflow-x:clip}
 
       // El mensaje se muestra al instante (Google tarda ~3 s). De fondo se envía y se LEE la respuesta del script
       // (Google permite leerla: Access-Control-Allow-Origin *). Si no confirma que guardó, reintenta hasta 3 veces.
+      evento('intento-anotarse', {formulario: form.dataset.origen});
       btn.disabled = true;
       form.hidden = true;
       say(OK_MSG);
@@ -667,15 +673,18 @@ body{overflow-x:clip}
             const r = await fetch(url, {method:'POST', body:datos, keepalive: intento === 1});   // reintentos sin keepalive
             const d = await r.json();
             if(d.ok){
+              evento('anotado', {formulario: form.dataset.origen, resultado: d.mensaje});
               if(d.mensaje === 'ya confirmado'){ say(M.yaConf); if(aviso) abrirAviso(email, true); }
               return;
             }
+            if(!d.ok) evento('error-formulario', {formulario: form.dataset.origen, motivo: d.mensaje});
             if(d.mensaje === 'email inválido') return volver(M.invalido);
             if(d.mensaje === 'temporal') return volver(M.temporal);
             if(d.mensaje === 'muchos') return volver(M.muchos);
           }catch(err){}
           await new Promise(res => setTimeout(res, 1500 * intento));
         }
+        evento('error-formulario', {formulario: form.dataset.origen, motivo: 'red'});
         volver(M.error);
       })();
     });
@@ -688,6 +697,8 @@ body{overflow-x:clip}
     chip.setAttribute('role', 'button');
     chip.setAttribute('tabindex', '0');
     chip.setAttribute('aria-pressed', 'false');
+    chip.setAttribute('data-umami-event', 'impresora');
+    chip.setAttribute('data-umami-event-modelo', chip.textContent.trim());
     const alternar = () => {
       if(document.body.classList.contains('sn-edit')) return;   // en modo edición, el click es para editar el texto
       const on = chip.classList.toggle('si');

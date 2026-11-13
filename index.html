@@ -223,7 +223,7 @@ body{overflow-x:clip}
       <span class="tag">Blender Addon · para impresión 3d</span>
       <h1>La impresión no planar, ahora dentro de Blender.</h1>
       <p class="lead">sn_non-planar genera el G-code de tu pieza sin salir de Blender, listo para imprimir. Superficies más suaves, piezas más fuertes y formas que con un slicer común no salen.</p>
-      <form class="join" data-sn-form="">
+      <form class="join" data-sn-form="" data-origen="landing-arriba">
         <input type="email" name="email" required="" placeholder="Tu email">
         <input type="text" name="sitio_web" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="btn" type="submit">Quiero acceso anticipado</button>
@@ -414,7 +414,7 @@ body{overflow-x:clip}
 <section class="cta" id="anotate">
   <div class="wrap">
     <h2>50% OFF<br>solo para la lista!</h2>
-    <form class="join" data-sn-form="">
+    <form class="join" data-sn-form="" data-origen="landing-abajo">
       <input type="email" name="email" required="" placeholder="Tu email">
       <input type="text" name="sitio_web" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn" type="submit">Lo quiero!</button>
@@ -472,17 +472,31 @@ body{overflow-x:clip}
         m.textContent = txt; m.classList.toggle('err', !!err);
       };
       if(!url){ say('El formulario todavía no está conectado.', true); return; }
-      // Google tarda ~3 s en responder y igual no deja leer la respuesta: se muestra el "Listo" al instante
-      // y el envío sigue de fondo (keepalive: termina aunque cierren la página). Si la red falla, vuelve el formulario.
+      // El "Listo" se muestra al instante (Google tarda ~3 s). De fondo se envía y se LEE la respuesta del script
+      // (Google permite leerla: Access-Control-Allow-Origin *). Si no confirma que guardó, reintenta hasta 3 veces;
+      // si igual falla, vuelve el formulario con un aviso.
       btn.disabled = true;
       form.hidden = true;
       say('¡Listo! Ya estás en la lista. Te escribo cuando salga.');
-      fetch(url, {method:'POST', mode:'no-cors', keepalive:true, body:new URLSearchParams({
-        email, origen:'landing', pagina:location.href, sitio_web:form.sitio_web.value})})
-      .catch(() => {
+      const datos = new URLSearchParams({email, origen: form.dataset.origen || 'landing',
+        pagina: location.href, sitio_web: form.sitio_web.value});
+      (async () => {
+        for(let intento = 1; intento <= 3; intento++){
+          try{
+            const r = await fetch(url, {method:'POST', body:datos, keepalive: intento === 1});   // reintentos sin keepalive, por si ese era el problema
+            const d = await r.json();
+            if(d.ok) return;
+            if(d.mensaje === 'email inválido'){
+              form.hidden = false; btn.disabled = false;
+              say('Ese mail no parece válido. Revisalo y probá de nuevo.', true);
+              return;
+            }
+          }catch(err){}
+          await new Promise(res => setTimeout(res, 1500 * intento));
+        }
         form.hidden = false; btn.disabled = false;
         say('No se pudo anotar. Revisá tu conexión y probá de nuevo.', true);
-      });
+      })();
     });
   });
 })();

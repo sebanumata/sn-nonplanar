@@ -460,7 +460,7 @@ body{overflow-x:clip}
 (function(){
   const meta = document.querySelector('meta[name="sn-form-url"]');
   document.querySelectorAll('form[data-sn-form]').forEach(form => {
-    form.addEventListener('submit', async e => {
+    form.addEventListener('submit', e => {
       e.preventDefault();
       if(document.body.classList.contains('sn-edit')) return;   // en modo edición no se envía
       const url = meta && meta.content.trim();
@@ -472,16 +472,17 @@ body{overflow-x:clip}
         m.textContent = txt; m.classList.toggle('err', !!err);
       };
       if(!url){ say('El formulario todavía no está conectado.', true); return; }
+      // Google tarda ~3 s en responder y igual no deja leer la respuesta: se muestra el "Listo" al instante
+      // y el envío sigue de fondo (keepalive: termina aunque cierren la página). Si la red falla, vuelve el formulario.
       btn.disabled = true;
-      try{
-        await fetch(url, {method:'POST', mode:'no-cors', body:new URLSearchParams({
-          email, origen:'landing', pagina:location.href, sitio_web:form.sitio_web.value})});
-        form.hidden = true;
-        say('¡Listo! Ya estás en la lista. Te escribo cuando salga.');
-      }catch(err){
-        btn.disabled = false;
-        say('No se pudo anotar. Probá de nuevo en un rato.', true);
-      }
+      form.hidden = true;
+      say('¡Listo! Ya estás en la lista. Te escribo cuando salga.');
+      fetch(url, {method:'POST', mode:'no-cors', keepalive:true, body:new URLSearchParams({
+        email, origen:'landing', pagina:location.href, sitio_web:form.sitio_web.value})})
+      .catch(() => {
+        form.hidden = false; btn.disabled = false;
+        say('No se pudo anotar. Revisá tu conexión y probá de nuevo.', true);
+      });
     });
   });
 })();

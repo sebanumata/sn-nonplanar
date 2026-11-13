@@ -93,6 +93,15 @@ dialog.aviso[open]{animation:aviso-in .22s ease-out}
 .strip small{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-right:6px}
 .chip{display:inline-block;font-size:14px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card)}
 .chip.ok{border-color:var(--acc);color:var(--acc)}
+/* impresoras clickeables: al tocar una se pinta y aparece "¡Sí!" debajo */
+.strip .chip{position:relative;cursor:pointer;user-select:none;transition:border-color .15s,color .15s,background .15s}
+.strip .chip:hover{border-color:color-mix(in srgb,var(--acc) 60%,var(--line))}
+.strip .chip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.strip .chip.si{border-color:var(--acc);color:var(--acc);background:color-mix(in srgb,var(--acc) 10%,var(--card))}
+.strip .chip.si::after{content:"¡Sí!";position:absolute;left:50%;top:calc(100% + 7px);transform:translateX(-50%);
+  font-size:14px;color:var(--mut);white-space:nowrap;pointer-events:none;animation:si-in .2s ease-out}
+@keyframes si-in{from{opacity:0;transform:translate(-50%,-4px)}to{opacity:1;transform:translate(-50%,0)}}
+.strip{padding-bottom:44px}
 
 /* grids */
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
@@ -194,12 +203,14 @@ body{overflow-x:clip}
   .under{font-size:13px;text-align:center}
 
   /* impresoras: una sola fila que se desliza */
-  .strip{padding:16px 0}
+  .strip{padding:16px 0 4px}
   .strip .wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
     -webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
   .strip .wrap::-webkit-scrollbar{display:none}
   .strip small,.chip{flex:none}
   .chip{font-size:13px}
+  .strip .wrap{padding-bottom:30px}
+  .strip .chip.si::after{font-size:13px}
 
   /* tarjetas */
   .grid3,.grid2{gap:12px;margin-top:26px}
@@ -608,6 +619,22 @@ body{overflow-x:clip}
         volver('No se pudo anotar. Revisá tu conexión y probá de nuevo.');
       })();
     });
+  });
+})();
+
+// Impresoras de "Funciona con": tocar una la pinta y muestra "¡Sí!" debajo (tocar de nuevo la apaga)
+(function(){
+  document.querySelectorAll('.strip .chip').forEach(chip => {
+    chip.setAttribute('role', 'button');
+    chip.setAttribute('tabindex', '0');
+    chip.setAttribute('aria-pressed', 'false');
+    const alternar = () => {
+      if(document.body.classList.contains('sn-edit')) return;   // en modo edición, el click es para editar el texto
+      const on = chip.classList.toggle('si');
+      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    };
+    chip.addEventListener('click', alternar);
+    chip.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); alternar(); } });
   });
 })();
 

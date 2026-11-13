@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161614" media="(prefers-color-scheme: dark)">
+<meta name="sn-form-url" content="">
+<title>sn_non-planar · Impresión no planar en Blender para Bambu Lab</title>
+<style>
+:root{
+  --bg:#f4f3ef; --card:#fff; --ink:#1d1d1b; --mut:#6b6a64; --line:#dedcd4; --acc:#c2410c; --acc-ink:#fff;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#161614; --card:#21211e; --ink:#eceae4; --mut:#9b998f; --line:#34332e; --acc:#fb923c; --acc-ink:#161614}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--sans)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+section{padding:88px 0;border-top:1px solid var(--line)}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.015em;line-height:1.1;margin:0}
+h1{font-size:clamp(40px,6vw,72px)}
+h2{font-size:clamp(30px,4vw,44px);max-width:22ch}
+h3{font-size:22px;margin-bottom:8px}
+p{margin:0}
+.mut{color:var(--mut)}
+.lead{font-size:20px;color:var(--mut);max-width:56ch;margin-top:20px}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:18px}
+
+/* header */
+header{padding:18px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:var(--serif);font-size:22px;font-weight:600}
+.logo b{color:var(--acc);font-weight:600}
+header a.btn{padding:9px 16px;font-size:14px}
+
+/* hero */
+.hero{border-top:0;padding:48px 0 72px}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+.launch{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:36px 32px}
+.launch .tag{margin-bottom:10px}
+.launch-date{font-family:var(--serif);font-size:clamp(44px,6vw,76px);line-height:1;color:var(--acc);letter-spacing:-.02em}
+.launch-sub{color:var(--mut);margin-top:12px}
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:28px}
+.count div{border:1px solid var(--line);border-radius:10px;padding:14px 6px;text-align:center}
+.count b{display:block;font-family:var(--serif);font-size:38px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.count small{display:block;font-size:12px;color:var(--mut);margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.launch-done{font-family:var(--serif);font-size:32px;margin-top:24px}
+form.join{display:flex;gap:8px;margin-top:32px;max-width:480px}
+form.join input{flex:1;font:inherit;padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn{display:inline-block;font:inherit;font-weight:600;padding:14px 20px;border-radius:10px;border:0;background:var(--acc);color:var(--acc-ink);text-decoration:none;cursor:pointer;white-space:nowrap}
+.under{font-size:14px;color:var(--mut);margin-top:10px}
+.hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
+form.join[hidden]{display:none}
+.join-msg{margin-top:14px;font-weight:600}
+.hero-txt .join-msg{order:5}   /* en celular el hero se reordena: el mensaje va donde estaba el formulario */
+.join-msg.err{color:var(--acc)}
+
+/* printers strip */
+.strip{padding:28px 0;border-top:1px solid var(--line)}
+.strip .wrap{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.strip small{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-right:6px}
+.chip{display:inline-block;font-size:14px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card)}
+.chip.ok{border-color:var(--acc);color:var(--acc)}
+
+/* grids */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:44px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px}
+.card p{color:var(--mut)}
+.num{font-family:var(--serif);font-size:44px;color:var(--acc);line-height:1;margin-bottom:14px}
+.card.us{border-color:var(--acc)}
+.card.us h3{color:var(--acc)}
+.card ul.who{margin-top:14px}
+.gain{margin-top:56px}
+
+/* modes */
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:44px}
+.modes .card h3{font-size:20px}
+
+/* bambu */
+.bambu{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.facts{list-style:none;margin:0;padding:0}
+.facts li{padding:18px 0;border-bottom:1px solid var(--line)}
+.facts li:first-child{border-top:1px solid var(--line)}
+.facts strong{display:block;font-size:18px;margin-bottom:4px}
+.facts span{color:var(--mut)}
+.note{margin-top:22px;font-size:15px;color:var(--mut);border-left:3px solid var(--acc);padding-left:14px}
+
+/* lists */
+ul.who{margin:24px 0 0;padding-left:20px}
+ul.who li{margin:6px 0}
+.req{margin-top:28px;font-size:15px;color:var(--mut)}
+
+/* faq */
+.faq{margin-top:36px;max-width:780px}
+.faq dt{font-weight:700;font-size:18px;margin-top:26px}
+.faq dd{margin:6px 0 0;color:var(--mut)}
+
+/* about + cta */
+.about{display:grid;grid-template-columns:200px 1fr;gap:40px;align-items:start}
+.about p{font-size:19px;max-width:62ch}
+.cta{text-align:center}
+.cta h2{margin:0 auto;max-width:20ch}
+.cta form.join{margin:32px auto 0}
+.cta .under{max-width:52ch;margin:12px auto 0}
+.legal{font-size:13px;color:var(--mut);margin-top:22px}
+.legal a{color:inherit;text-decoration:underline}
+footer{padding:36px 0;border-top:1px solid var(--line);font-size:14px;color:var(--mut)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px}
+
+/* barra fija de celular (oculta en compu) */
+.mbar{display:none}
+body{overflow-x:clip}
+
+@media (max-width:860px){
+  .hero-grid,.bambu,.about,.grid3,.grid2{grid-template-columns:1fr}
+  section{padding:64px 0}
+  .bambu{gap:32px}
+  .about{gap:12px}
+}
+
+/* ===== celular ===== */
+@media (max-width:600px){
+  body{font-size:16px;line-height:1.5}
+  .wrap{padding:0 max(18px,env(safe-area-inset-left)) 0 max(18px,env(safe-area-inset-right))}
+  section{padding:52px 0}
+  h1{font-size:clamp(34px,10.5vw,46px);line-height:1.05}
+  h2{font-size:clamp(27px,8vw,34px)}
+  h3{font-size:20px}
+  .lead{font-size:17px;margin-top:14px}
+  .tag{font-size:11px;margin-bottom:12px}
+
+  /* header fijo arriba, compacto */
+  header{position:sticky;top:0;z-index:50;padding:10px 0;background:color-mix(in srgb,var(--bg) 88%,transparent);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .logo{font-size:19px}
+  header a.btn{padding:8px 14px;font-size:14px}
+
+  /* hero: título → texto → lanzamiento → formulario */
+  .hero{padding:26px 0 44px}
+  .hero-grid{display:flex;flex-direction:column;gap:0;align-items:stretch}
+  .hero-txt .tag{align-self:flex-start}
+  .hero-txt{display:contents}
+  .hero-txt .tag{order:1}
+  .hero-txt h1{order:2}
+  .hero-txt .lead{order:3}
+  .launch{order:4;margin-top:24px;padding:20px 18px}
+  .hero-txt form.join{order:5}
+  .hero-txt .under{order:6}
+  .launch .tag{margin-bottom:6px}
+  .launch-date{font-size:clamp(40px,13vw,54px)}
+  .launch-sub{font-size:14px;margin-top:8px}
+  .count{gap:8px;margin-top:16px}
+  .count div{padding:10px 2px}
+  .count b{font-size:28px}
+  .count small{font-size:10px}
+
+  /* formularios a todo el ancho, fáciles de tocar */
+  form.join{flex-direction:column;margin-top:20px;max-width:none}
+  form.join input{font-size:16px;padding:15px 16px;min-height:52px}
+  form.join .btn{width:100%;min-height:52px;font-size:17px}
+  .under{font-size:13px;text-align:center}
+
+  /* impresoras: una sola fila que se desliza */
+  .strip{padding:16px 0}
+  .strip .wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    -webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+  .strip .wrap::-webkit-scrollbar{display:none}
+  .strip small,.chip{flex:none}
+  .chip{font-size:13px}
+
+  /* tarjetas */
+  .grid3,.grid2{gap:12px;margin-top:26px}
+  .card{padding:20px}
+  .num{font-size:34px;margin-bottom:8px}
+  .grid3 .card:has(.num){display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:start}
+  .grid3 .card .num{grid-row:span 2;margin:0}
+
+  /* modos: carrusel que se desliza con el dedo */
+  .modes{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:26px -18px 0;padding:0 18px 6px;scroll-padding:0 18px}
+  .modes::-webkit-scrollbar{display:none}
+  .modes .card{flex:0 0 78%;scroll-snap-align:start}
+
+  .facts li{padding:14px 0}
+  .facts strong{font-size:17px}
+  .note{font-size:14px}
+  ul.who{margin-top:12px}
+  .faq{margin-top:20px}
+  .faq dt{font-size:17px;margin-top:20px}
+  .about p{font-size:17px}
+  .cta h2{font-size:clamp(28px,8.5vw,36px)}
+  .cta form.join{margin-top:22px}
+  .legal{font-size:12px}
+  footer{padding:28px 0 calc(96px + env(safe-area-inset-bottom))}
+
+  /* barra fija abajo */
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;gap:12px;align-items:center;justify-content:space-between;
+    padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+    background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);transform:translateY(110%);transition:transform .25s ease}
+  .mbar.show{transform:none}
+  .mbar-txt{font-size:13px;font-weight:600;line-height:1.25}
+  .mbar .btn{padding:12px 18px;font-size:15px}
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo">sn_<b>non-planar</b></div>
+    <a class="btn" href="#anotate">Lo quiero!</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-txt">
+      <span class="tag">Blender Addon · para impresión 3d</span>
+      <h1>La impresión no planar, ahora dentro de Blender.</h1>
+      <p class="lead">sn_non-planar genera el G-code de tu pieza sin salir de Blender, listo para imprimir. Superficies más suaves, piezas más fuertes y formas que con un slicer común no salen.</p>
+      <form class="join" data-sn-form="">
+        <input type="email" name="email" required="" placeholder="Tu email">
+        <input type="text" name="sitio_web" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn" type="submit">Quiero acceso anticipado</button>
+      </form>
+      <p class="under">Sé de los primeros en probarlo. Precio especial de lanzamiento para la lista: 50% OFF</p>
+    </div>
+    <div class="launch">
+      <span class="tag">Lanzamiento</span>
+      <p class="launch-date">12.12 · 12:12</p>
+      <p class="launch-sub">Sábado 12 de diciembre, 12:12 h (hora Argentina)</p>
+      <div class="count" id="sn-count" data-launch="2026-12-12T12:12:00-03:00">
+        <div><b id="cd-d">--</b><small>días</small></div>
+        <div><b id="cd-h">--</b><small>horas</small></div>
+        <div><b id="cd-m">--</b><small>min</small></div>
+        <div><b id="cd-s">--</b><small>seg</small></div>
+      </div>
+      <p class="launch-done" id="cd-done" hidden="">¡Ya salió!</p>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <small>Funciona con</small>
+    <span class="chip ok">A1 mini</span>
+    <span class="chip">A1</span>
+    <span class="chip">A2L</span>
+    <span class="chip">P1P</span>
+    <span class="chip">P1S</span>
+    <span class="chip">X1</span>
+    <span class="chip">X1 Carbon</span>
+    <span class="chip">X1E</span>
+    <span class="chip">P2S</span>
+    <span class="chip">H2S</span>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <span class="tag">La diferencia</span>
+    <h2>No es un slicer. Acá el recorrido lo diseñás vos.</h2>
+    <p class="lead">Un slicer agarra tu pieza y decide solo cómo llenarla de capas.<br>En sn_non-planar es al revés: la línea que hace la boquilla es el diseño. Elegís el patrón, el ritmo y la altura de cada onda, y eso exacto es lo que se imprime.</p>
+    <div class="grid2">
+      <div class="card">
+        <h3>Con un slicer</h3>
+        <ul class="who">
+          <li>La textura la tenés que modelar en la malla: archivos pesados, de millones de triángulos.</li>
+          <li>El slicer la corta en capas planas y la aproxima como puede.</li>
+          <li>Lo que no es un sólido, no lo puede imprimir: celdas abiertas, gotas, hilos en el aire.</li>
+          <li>Cada capa tiene su costura y sus cortes.</li>
+        </ul>
+      </div>
+      <div class="card us">
+        <h3>Con sn_non-planar</h3>
+        <ul class="who">
+          <li>Partís de una forma simple y el patrón lo pone el recorrido.</li>
+          <li>La boquilla sube y baja de verdad dentro de la misma vuelta.</li>
+          <li>Imprimís cosas que solo existen como recorrido: malla abierta, gotas, bandas.</li>
+          <li>La pared sale en una sola línea continua, sin cortes ni retracciones.</li>
+        </ul>
+      </div>
+    </div>
+    <h3 class="gain">Lo que ganás</h3>
+    <div class="grid3" style="margin-top:20px">
+      <div class="card">
+        <h3>Piezas que nadie más hace</h3>
+        <p>Si vendés macetas, lámparas o deco, tenés un acabado que no sale de ningún slicer. Ese es tu diferencial.</p>
+      </div>
+      <div class="card">
+        <h3>Diseñás, no configurás</h3>
+        <p>Decidís cómo se ve la superficie con criterios de diseño: ritmo, amplitud, apertura. Sin pelearte con cientos de opciones para que salga "más o menos".</p>
+      </div>
+      <div class="card">
+        <h3>Recetas ya impresas</h3>
+        <p>Los presets salen de piezas impresas de verdad, no de la teoría. Y cuando algo te sale bien, lo guardás como tuyo.</p>
+      </div>
+    </div>
+    <p class="note">No es un slicer general: no está pensado para piezas mecánicas ni para laminar cualquier STL. Es una herramienta para diseñar el recorrido.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="tag">Beneficios</span>
+    <h2>Lo que cambia cuando dejás de imprimir plano</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>Superficies sin escalones</h3>
+        <p>Las capas siguen la curva de la pieza. Chau al efecto escalera en zonas curvas y diagonales.</p>
+      </div>
+      <div class="card">
+        <h3>Previz en tiempo real</h3>
+        <p>Generás la trayectoria y podés verla mientras la modificás en tiempo real. Ves la pieza como va a ser impresa y el recorrido exacto del pico de tu impresora.</p>
+      </div>
+      <div class="card">
+        <h3>Todo en Blender</h3>
+        <p>Modelás, generás el recorrido y lo previsualizás en el mismo archivo.<br>Exportás con 1 click! Listo para imprimirse.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap bambu">
+    <div>
+      <span class="tag">Hecho para Bambu Lab</span>
+      <h2>Tu impresora, tus perfiles, sin configurar nada a mano</h2>
+      <p class="lead">El addon lee tu impresora directo de Bambu Studio. Elegís el modelo, la boquilla y el filamento que ya usás,<br>y el G-code sale configurado para tu máquina.</p>
+      <p class="note">Probado e impreso en la A1 mini. Las Bambu de doble boquilla (H2D, H2D Pro, X2D, H2C) todavía no están soportadas.</p>
+    </div>
+    <ul class="facts">
+      <li><strong>10 impresoras Bambu Lab</strong><span>A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S y H2S.</span></li>
+      <li><strong>Boquillas de 0,4 · 0,6 · 0,8 mm</strong><span>Los anchos de línea y caudales se ajustan a la boquilla que elijas.</span></li>
+      <li><strong>Chequeo de choques</strong><span>Antes de exportar, revisa que el cabezal no toque la pieza en los tramos más inclinados.</span></li>
+      <li><strong>Chequeo de velocidad en Z</strong><span>Te avisa si tu impresora va a frenar en las subidas y bajadas, comparada con la A1 mini.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="tag">Qué podés imprimir</span>
+    <h2>Un recorrido distinto para cada idea</h2>
+    <div class="modes">
+      <div class="card"><h3>Paredes con ondas</h3><p>La boquilla sube y baja mientras recorre la pared. Texturas que en capas planas no existen.</p></div>
+      <div class="card"><h3>Malla en el aire</h3><p>Hilos que se cruzan y dejan celdas abiertas reales, para macetas y pantallas de lámpara, o cualquier pieza tuya.</p></div>
+      <div class="card"><h3>Bandas</h3><p>Franjas inclinadas que siguen un patrón dibujado o una curva tuya.<br>Hola formas orgánicas que son imposibles en el slicer.</p></div>
+      <div class="card"><h3>Gotas</h3><p>Columnas de gotas de plástico, una sobre otra. Un acabado que parece hecho a mano. Muy único!</p></div>
+      <div class="card"><h3>Relleno con capas curvas</h3><p>Piezas sólidas cuya tapa copia la forma del modelo, sin escalones arriba.<br>Chau efecto escalera!</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="tag">Cómo funciona</span>
+    <h2>sn_non-planar en 3 pasos</h2>
+    <div class="grid3">
+      <div class="card"><div class="num">1</div><h3>Modelá tu pieza</h3><p>También podés importar un stl o cualquier archivo 3D de tu programa favorito.</p></div>
+      <div class="card"><div class="num">2</div><h3>Elegí tu Bambu y generá el recorrido</h3><p>Miralo en el viewport antes de imprimir. Todo en tiempo real!</p></div>
+      <div class="card"><div class="num">3</div><h3>Exportá el G-code</h3><p>1 click y lo mandas a tu impresora.<br>¡Y listo! Ponés a imprimir :)</p></div>
+    </div>
+    <div class="grid2">
+      <div>
+        <h3>Para quién es</h3>
+        <ul class="who">
+          <li>Makers con impresora Bambu Lab que quieren diferenciarse de los demás y ser los únicos en el nicho.</li>
+          <li>Diseñadores y artistas 3D que ya usan Blender.</li>
+          <li>Quienes hacen piezas de diseño: lámparas, jarrones, objetos con superficies orgánicas.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Requisitos</h3>
+        <ul class="who">
+          <li>Blender 4.2 o superior.</li>
+          <li>Una impresora Bambu Lab de una boquilla.</li>
+          <li>Bambu Studio instalado, con tu impresora configurada.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="tag">Preguntas</span>
+    <h2>Preguntas frecuentes</h2>
+    <dl class="faq">
+      <dt>¿Funciona con mi Bambu Lab?</dt>
+      <dd>Sí, si es de una sola boquilla: A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S o H2S. La A1 mini es la que más probé; en las otras, hacé la primera impresión mirando la máquina.</dd>
+      <dt>¿Qué diferencia hay con un slicer que tiene modo no planar?</dt>
+      <dd>Esos slicers parten de tu pieza y curvan algunas capas, sobre todo las de arriba. sn_non-planar parte del recorrido: el patrón de la pared lo diseñás vos, línea por línea. Por eso hace cosas que un slicer no puede, como malla con celdas abiertas o gotas.</dd>
+      <dt>¿Necesito saber programar o editar G-code?</dt>
+      <dd>No. Todo se hace desde un panel en Blender, con sliders y una vista previa del recorrido.</dd>
+      <dt>¿Puedo usarlo con otras marcas?</dt>
+      <dd>Por ahora no. Me concentré en Bambu Lab para que cada archivo salga probado y listo para imprimir.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <div class="wrap about">
+    <h3>Sobre mí</h3>
+    <p>Soy sebanumata, artista 3D y VFX, buscando ir un paso más allá en la impresión 3D con Blender. Siempre busqué diferenciarme en cualquier cosa que haga, y poder ayudar a los demás. Hoy me estoy enfocando en el diseño paramétrico/procedural y a la impresión 3D con Blender. Y armé sn_non-planar para que puedas hacer cosas que nadie hace!</p>
+  </div>
+</section>
+
+<section class="cta" id="anotate">
+  <div class="wrap">
+    <h2>50% OFF<br>solo para la lista!</h2>
+    <form class="join" data-sn-form="">
+      <input type="email" name="email" required="" placeholder="Tu email">
+      <input type="text" name="sitio_web" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn" type="submit">Lo quiero!</button>
+    </form>
+    <p class="under">Sin spam. Soy Seba (no una IA) y te dejo un mail escrito por mí sobre las novedades del proyecto, y un paso a paso de cómo avanzar.</p>
+    <p class="legal">Al anotarte, aceptás recibir emails sobre sn_non-planar y que tu mail se guarde en Google (EE.UU.). Te podés dar de baja cuando quieras. <a href="privacidad.html">Política de privacidad</a></p>
+  </div>
+</section>
+
+<!-- barra fija abajo, solo en celular -->
+<div class="mbar" id="sn-mbar">
+  <p class="mbar-txt">50% OFF para la lista · sale el 12.12</p>
+  <a class="btn" href="#anotate">Lo quiero!</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>sn_non-planar™ · © 2026 sebanumata. Todos los derechos reservados</p>
+    <p>Creado por @sebanumata</p>
+  </div>
+</footer>
+
+<script>
+// Cuenta regresiva al lanzamiento (la fecha está en data-launch, hora Argentina = UTC-3)
+(function(){
+  const box = document.getElementById('sn-count');
+  if(!box) return;
+  const end = new Date(box.dataset.launch).getTime();
+  const two = n => String(n).padStart(2, '0');
+  function tick(){
+    let s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+    if(s === 0){ box.hidden = true; document.getElementById('cd-done').hidden = false; return; }
+    document.getElementById('cd-d').textContent = Math.floor(s / 86400);
+    document.getElementById('cd-h').textContent = two(Math.floor(s % 86400 / 3600));
+    document.getElementById('cd-m').textContent = two(Math.floor(s % 3600 / 60));
+    document.getElementById('cd-s').textContent = two(s % 60);
+    setTimeout(tick, 1000 - Date.now() % 1000);
+  }
+  tick();
+})();
+
+// Formulario de la lista: manda el mail al Apps Script (URL en <meta name="sn-form-url">)
+(function(){
+  const meta = document.querySelector('meta[name="sn-form-url"]');
+  document.querySelectorAll('form[data-sn-form]').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      if(document.body.classList.contains('sn-edit')) return;   // en modo edición no se envía
+      const url = meta && meta.content.trim();
+      const email = form.email.value.trim();
+      const btn = form.querySelector('button');
+      const say = (txt, err) => {
+        let m = form.nextElementSibling;
+        if(!m || !m.classList.contains('join-msg')){ m = document.createElement('p'); m.className = 'join-msg'; form.after(m); }
+        m.textContent = txt; m.classList.toggle('err', !!err);
+      };
+      if(!url){ say('El formulario todavía no está conectado.', true); return; }
+      btn.disabled = true;
+      try{
+        await fetch(url, {method:'POST', mode:'no-cors', body:new URLSearchParams({
+          email, origen:'landing', pagina:location.href, sitio_web:form.sitio_web.value})});
+        form.hidden = true;
+        say('¡Listo! Ya estás en la lista. Te escribo cuando salga.');
+      }catch(err){
+        btn.disabled = false;
+        say('No se pudo anotar. Probá de nuevo en un rato.', true);
+      }
+    });
+  });
+})();
+
+// Barra fija de celular: aparece al pasar el formulario de arriba y se esconde en el formulario final
+(function(){
+  const bar = document.getElementById('sn-mbar');
+  const top = document.querySelector('.hero form.join');
+  const end = document.getElementById('anotate');
+  if(!bar || !top || !end || !('IntersectionObserver' in window)) return;
+  let pastTop = false, atEnd = false;
+  const upd = () => bar.classList.toggle('show', pastTop && !atEnd);
+  new IntersectionObserver(([e]) => { pastTop = !e.isIntersecting && e.boundingClientRect.top < 0; upd(); }).observe(top);
+  new IntersectionObserver(([e]) => { atEnd = e.isIntersecting; upd(); }, {rootMargin:'0px 0px -30% 0px'}).observe(end);
+})();
+</script>
+
+</body></html>

@@ -448,6 +448,7 @@ section.cta.vdark .join-msg{color:#eceef3}
           <button type="button" data-hmode="paralelas" aria-pressed="true">Parallel waves</button>
           <button type="button" data-hmode="malla" aria-pressed="false">Lattice</button>
           <button type="button" data-hmode="radial" aria-pressed="false">Radial lattice</button>
+          <button type="button" data-hmode="gotas" aria-pressed="false">Blobs</button>
         </div>
         <p class="vcap" id="modeCap" data-gen=""></p>
       </div>
@@ -940,7 +941,8 @@ section.cta.vdark .join-msg{color:#eceef3}
         planar: '<b>Planar.</b> Anillos horizontales: en cada vuelta la boquilla sube un escalón y deja una costura.',
         paralelas: '<b>Paralelas.</b> Una espiral continua con ondas en Z: todas las capas en fase, relieve sólido.',
         malla: '<b>Malla.</b> Media onda de desfase por vuelta: las capas se tocan solo en los nodos y quedan celdas abiertas.',
-        radial: '<b>Malla radial.</b> La línea entra y sale del contorno, alternando por vuelta: un tejido tipo canasta.'
+        radial: '<b>Malla radial.</b> La línea entra y sale del contorno, alternando por vuelta: un tejido tipo canasta.',
+        gotas: '<b>Gotas.</b> La boquilla deja una gota, sube en el lugar y salta a la siguiente: columnas de gotas, una sobre otra, sin retracciones.'
       },
       imprimiendo: 'IMPRIMIENDO', completo: 'COMPLETO', vuelta: 'vuelta',
       gcP: '; capa 9 · Z fijo', gcN: '; capa 9 · Z en cada punto', gcCapa: n => '; capa ' + n + ' · inclinada',
@@ -956,7 +958,8 @@ section.cta.vdark .join-msg{color:#eceef3}
         planar: '<b>Planar.</b> Horizontal rings: on every loop the nozzle steps up and leaves a seam.',
         paralelas: '<b>Parallel waves.</b> One continuous spiral with waves in Z: every layer in phase, solid relief.',
         malla: '<b>Lattice.</b> Half a wave of offset per loop: layers only touch at the nodes and leave open cells.',
-        radial: '<b>Radial lattice.</b> The line weaves in and out of the outline, alternating every loop: a basket weave.'
+        radial: '<b>Radial lattice.</b> The line weaves in and out of the outline, alternating every loop: a basket weave.',
+        gotas: '<b>Blobs.</b> The nozzle lays a blob, climbs on the spot and hops to the next one: columns of blobs stacked one on top of another, with no retractions.'
       },
       imprimiendo: 'PRINTING', completo: 'DONE', vuelta: 'loop',
       gcP: '; layer 9 · fixed Z', gcN: '; layer 9 · Z at every point', gcCapa: n => '; layer ' + n + ' · tilted',
@@ -972,7 +975,8 @@ section.cta.vdark .join-msg{color:#eceef3}
         planar: '<b>Planar.</b> Anéis horizontais: a cada volta o bico sobe um degrau e deixa uma costura.',
         paralelas: '<b>Paralelas.</b> Uma espiral contínua com ondas em Z: todas as camadas em fase, relevo sólido.',
         malla: '<b>Malha.</b> Meia onda de defasagem por volta: as camadas só se tocam nos nós e ficam células abertas.',
-        radial: '<b>Malha radial.</b> A linha entra e sai do contorno, alternando a cada volta: uma trama tipo cesto.'
+        radial: '<b>Malha radial.</b> A linha entra e sai do contorno, alternando a cada volta: uma trama tipo cesto.',
+        gotas: '<b>Gotas.</b> O bico deixa uma gota, sobe no lugar e salta para a próxima: colunas de gotas, uma sobre a outra, sem retrações.'
       },
       imprimiendo: 'IMPRIMINDO', completo: 'COMPLETO', vuelta: 'volta',
       gcP: '; camada 9 · Z fixo', gcN: '; camada 9 · Z em cada ponto', gcCapa: n => '; camada ' + n + ' · inclinada',
@@ -1034,8 +1038,14 @@ section.cta.vdark .join-msg{color:#eceef3}
   let cellsOn = -1;
   const HH = 64, Rz = z => 20 + 7.5 * Math.sin(Math.PI * (z / HH) * 1.02 + 0.12);
   const pol = (r, th, z) => [r * Math.cos(th), r * Math.sin(th), z];
+  const BLOB = { n: 20, h: 2.7, r: 1.75 };   // gotas por vuelta, alto de cada gota, radio dibujado (mm)
   function buildHero(mode){
     const P = [], per = 200;
+    if(mode === 'gotas'){
+      const rows = Math.floor((HH - BLOB.h) / BLOB.h);
+      for(let k = 0; k <= rows; k++){ const z = BLOB.h * (k + 0.5); for(let j = 0; j < BLOB.n; j++) P.push(pol(Rz(z), j / BLOB.n * TAU, z)); }
+      return P;
+    }
     if(mode === 'planar'){
       const L = 30, h = HH / L;
       for(let i = 0; i < L; i++){ const z = i * h, r = Rz(z); for(let j = 0; j <= per; j++) P.push(pol(r, j / per * TAU, z)); }
@@ -1054,7 +1064,7 @@ section.cta.vdark .join-msg{color:#eceef3}
     return P;
   }
   const heroC = document.getElementById('hero3d'), heroRead = document.getElementById('heroRead'), modeCap = document.getElementById('modeCap');
-  const order = ['paralelas', 'malla', 'radial', 'planar'];
+  const order = ['paralelas', 'malla', 'radial', 'gotas', 'planar'];
   const hero = { mode: 'paralelas', pts: buildHero('paralelas'), prog: reduce ? 1 : 0.58, hold: 0, auto: true };
   const hBtns = document.querySelectorAll('[data-hmode]');
   function setMode(m, user){
@@ -1080,6 +1090,7 @@ section.cta.vdark .join-msg{color:#eceef3}
     ctx.strokeStyle = 'rgba(200,170,110,.08)'; ctx.lineWidth = 1 / se;
     for(let r = 8; r <= 40; r += 8){ ctx.beginPath(); ctx.arc(0, 0, r * s, 0, TAU); ctx.stroke(); }
     ctx.restore();
+    if(hero.mode === 'gotas'){ drawBlobs(ctx, w, s, proj); return; }
     const pts = hero.pts, n = Math.max(2, Math.floor(hero.prog * (pts.length - 1)) + 1);
     const pr = new Array(n);
     for(let i = 0; i < n; i++) pr[i] = proj(pts[i]);
@@ -1112,6 +1123,40 @@ section.cta.vdark .join-msg{color:#eceef3}
     if(on !== cellsOn){
       cellsOn = on;
       [...cellsEl.children].forEach((c, i) => c.classList.toggle('on', i < on));
+      progL.textContent = hero.prog >= 1 ? T_.completo + ' 100 %' : `${T_.imprimiendo} ${Math.round(hero.prog * 100)} %`;
+    }
+  }
+
+  function drawBlobs(ctx, w, s, proj){
+    const pts = hero.pts, total = pts.length, f = hero.prog * total;
+    const done = Math.min(total, Math.floor(f)), grow = hero.prog >= 1 ? 1 : f - done;
+    const list = [];
+    for(let i = 0; i < done; i++){ const q = proj(pts[i]); list.push([q, 1, i]); }
+    if(done < total){ const q = proj(pts[done]); list.push([q, Math.min(1, grow * 1.6), done]); }
+    list.sort((a, b) => a[0][2] - b[0][2]);   // los de atrás primero
+    for(const [q, k, i] of list){
+      const front = Math.max(0, Math.min(1, 0.5 - q[2] / 60));
+      const r = BLOB.r * s * (0.55 + 0.45 * k), cur = i === done && hero.prog < 1;
+      const g = ctx.createRadialGradient(q[0] - r * 0.35, q[1] - r * 0.4, r * 0.1, q[0], q[1], r);
+      if(cur){ g.addColorStop(0, 'rgba(255,236,200,1)'); g.addColorStop(.5, 'rgba(255,170,80,.95)'); g.addColorStop(1, 'rgba(234,118,0,.9)'); }
+      else {
+        const a = 0.25 + 0.75 * Math.pow(front, 1.2);
+        g.addColorStop(0, `rgba(255,190,120,${a})`); g.addColorStop(.55, `rgba(234,118,0,${a})`); g.addColorStop(1, `rgba(150,70,0,${a})`);
+      }
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q[0], q[1], r, 0, TAU); ctx.fill();
+    }
+    const idx = Math.min(total - 1, done), c = pts[idx];
+    if(hero.prog < 1){
+      const tip = proj([c[0], c[1], c[2] + BLOB.h * 0.35 * Math.min(1, grow * 1.6)]);
+      ctx.save(); ctx.shadowColor = 'rgba(255,170,80,.9)'; ctx.shadowBlur = 14;
+      nozzle(ctx, tip[0], tip[1] - BLOB.r * s * 0.6, Math.max(0.8, Math.min(1.4, w / 480)));
+      ctx.restore();
+    }
+    heroRead.innerHTML = `Z <b>${fmt(c[2], 2)}</b> mm · ${T_.vuelta} <b>${Math.floor(idx / BLOB.n) + 1}</b>`;
+    const on = Math.round(hero.prog * NCELL);
+    if(on !== cellsOn){
+      cellsOn = on;
+      [...cellsEl.children].forEach((el, i) => el.classList.toggle('on', i < on));
       progL.textContent = hero.prog >= 1 ? T_.completo + ' 100 %' : `${T_.imprimiendo} ${Math.round(hero.prog * 100)} %`;
     }
   }

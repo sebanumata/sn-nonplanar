@@ -953,7 +953,7 @@ section.cta.vdark .join-msg{color:#eceef3}
       ok: '✓ Lista para exportar',
       malS: '✕ Pendiente mayor a 34°: bajá la amplitud o alargá la onda',
       malH: '✕ La onda supera 4 mm bajo el cabezal',
-      cabezal: 'cabezal · ventiladores y ductos', limite: 'límite 4,0 mm', radio: 'radio 30 mm',
+      cabezal: 'cabezal · ventiladores y ductos', limite: 'límite 4,0 mm', radio: 'radio 30 mm', ang: 'ángulo comprobado: 34°',
       maxBajo: v => 'máx. bajo el cabezal: ' + v + ' mm ✓', dec: ','
     },
     en: {
@@ -970,7 +970,7 @@ section.cta.vdark .join-msg{color:#eceef3}
       ok: '✓ Ready to export',
       malS: '✕ Slope above 34°: lower the amplitude or lengthen the wave',
       malH: '✕ The wave goes over 4 mm under the print head',
-      cabezal: 'print head · fans and ducts', limite: 'limit 4.0 mm', radio: 'radius 30 mm',
+      cabezal: 'print head · fans and ducts', limite: 'limit 4.0 mm', radio: 'radius 30 mm', ang: 'tested angle: 34°',
       maxBajo: v => 'max. under the head: ' + v + ' mm ✓', dec: '.'
     },
     pt: {
@@ -987,7 +987,7 @@ section.cta.vdark .join-msg{color:#eceef3}
       ok: '✓ Pronta para exportar',
       malS: '✕ Inclinação acima de 34°: diminua a amplitude ou alongue a onda',
       malH: '✕ A onda passa de 4 mm sob o cabeçote',
-      cabezal: 'cabeçote · ventoinhas e dutos', limite: 'limite 4,0 mm', radio: 'raio 30 mm',
+      cabezal: 'cabeçote · ventoinhas e dutos', limite: 'limite 4,0 mm', radio: 'raio 30 mm', ang: 'ângulo comprovado: 34°',
       maxBajo: v => 'máx. sob o cabeçote: ' + v + ' mm ✓', dec: ','
     }
   }[LANG] || null;
@@ -1420,12 +1420,14 @@ section.cta.vdark .join-msg{color:#eceef3}
     <text data-k="limtext" x="${TIPX + 30 * K - 4}" text-anchor="end" font-size="12" fill="#5fd3a0"></text>
     <line data-k="dimv" stroke="#949db0" stroke-width="1"/>
     <text data-k="dimvt" font-size="12" fill="#949db0"></text>
+    <g data-k="ang" fill="none" stroke="#ff8f6b" stroke-width="1.6" stroke-linecap="round"></g>
     <circle data-k="tipglow" r="7" fill="#ffd28a" opacity=".85"/>
     <line data-k="radl" stroke="#949db0" stroke-width="1"/>
     <text data-k="radt" font-size="12" fill="#949db0" text-anchor="middle"></text>
-    <text data-k="maxt" font-size="13" fill="#5fd3a0" x="30" y="26"></text>`;
+    <text data-k="maxt" font-size="13" fill="#5fd3a0" x="30" y="26"></text>
+    <text data-k="angt" font-size="13" fill="#ff8f6b" x="30" y="46"></text>`;
   const $ = k => hs.querySelector(`[data-k="${k}"]`);
-  $('htext').textContent = T_.cabezal; $('limtext').textContent = T_.limite; $('radt').textContent = T_.radio;
+  $('htext').textContent = T_.cabezal; $('limtext').textContent = T_.limite; $('radt').textContent = T_.radio; $('angt').textContent = T_.ang;
   $('dimvt').textContent = fmt(4.76, 2) + ' mm';
   watch(hs);
   function drawHead(t){
@@ -1443,6 +1445,17 @@ section.cta.vdark .join-msg{color:#eceef3}
     $('limit').setAttribute('y1', lim); $('limit').setAttribute('y2', lim); $('limtext').setAttribute('y', lim - 6);
     const dv = $('dimv'); dv.setAttribute('x1', TIPX + 52); dv.setAttribute('x2', TIPX + 52); dv.setAttribute('y1', tipY); dv.setAttribute('y2', hb);
     $('dimvt').setAttribute('x', TIPX + 58); $('dimvt').setAttribute('y', (tipY + hb) / 2 + 4);
+    // ángulo comprobado: rectas a 34° desde la punta hasta la base del cabezal, arco y rótulo a cada lado
+    const A = 34 * Math.PI / 180, cy0 = tipY + 1, dx = (cy0 - hb) / Math.tan(A), R = 30;
+    let ag = '';
+    for(const sg of [-1, 1]){
+      ag += `<line x1="${TIPX}" y1="${cy0}" x2="${(TIPX + sg * dx).toFixed(1)}" y2="${hb.toFixed(1)}"/>`;
+      ag += `<line x1="${TIPX}" y1="${cy0}" x2="${TIPX + sg * (R + 10)}" y2="${cy0}" stroke-dasharray="3 3" stroke-opacity=".7"/>`;
+      ag += `<path d="M${TIPX + sg * R} ${cy0} A${R} ${R} 0 0 ${sg > 0 ? 0 : 1} ${(TIPX + sg * R * Math.cos(A)).toFixed(1)} ${(cy0 - R * Math.sin(A)).toFixed(1)}"/>`;
+      const lx = TIPX + sg * (R + 6) * Math.cos(A / 2), ly = cy0 - (R + 6) * Math.sin(A / 2) + 4;
+      ag += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${sg > 0 ? 'start' : 'end'}" font-size="12" fill="#ff8f6b" stroke="#0e1117" stroke-width="3" paint-order="stroke">34°</text>`;
+    }
+    $('ang').innerHTML = ag;
     $('tipglow').setAttribute('cx', TIPX); $('tipglow').setAttribute('cy', tipY + 1);
     const rl = $('radl'); rl.setAttribute('x1', TIPX); rl.setAttribute('x2', TIPX - 30 * K); rl.setAttribute('y1', hb - 74); rl.setAttribute('y2', hb - 74);
     $('radt').setAttribute('x', TIPX - 15 * K); $('radt').setAttribute('y', hb - 80);

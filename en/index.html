@@ -11,7 +11,7 @@
 <link rel="alternate" hreflang="en" href="https://sebanumata.github.io/sn-nonplanar/en/">
 <link rel="alternate" hreflang="pt" href="https://sebanumata.github.io/sn-nonplanar/pt/">
 <link rel="alternate" hreflang="x-default" href="https://sebanumata.github.io/sn-nonplanar/">
-<title>sn_non-planar · Non-planar 3D printing in Blender for Bambu Lab</title>
+<title>sn_non-planar · Non-planar 3D printing in Blender for your 3D printer</title>
 <style>
 /* Tipografías incluidas en la web para que se vea igual en todos los dispositivos (SIL OFL 1.1):
    Google Sans = títulos (fonts/OFL.txt) · Inter = textos, recuadro de lanzamiento y cuadro emergente (fonts/OFL-Inter.txt) */
@@ -432,6 +432,11 @@ section.cta.vdark .join-msg{color:#eceef3}
     <span class="chip">X1E</span>
     <span class="chip">P2S</span>
     <span class="chip">H2S</span>
+    <span class="chip">H2D</span>
+    <span class="chip">H2D Pro</span>
+    <span class="chip">X2D</span>
+    <span class="chip">H2C</span>
+    <span class="chip">+ other brands</span>
   </div>
 </div>
 
@@ -556,13 +561,14 @@ section.cta.vdark .join-msg{color:#eceef3}
 <section>
   <div class="wrap bambu">
     <div>
-      <span class="tag">Made for Bambu Lab</span>
+      <span class="tag">For your printer</span>
       <h2>Your printer, your profiles, no manual setup</h2>
-      <p class="lead">The add-on reads your printer straight from Bambu Studio. Pick the model, nozzle and filament you already use,<br>and the G-code comes out set up for your machine.</p>
-      <p class="note">Tested and printed on the A1 mini. Dual-nozzle Bambu printers (H2D, H2D Pro, X2D, H2C) aren't supported yet.</p>
+      <p class="lead">If you have a Bambu Lab, the add-on reads your printer straight from Bambu Studio: pick the model, nozzle and filament you already use.<br>If you have another brand, load a G-code you've already sliced in your slicer and the add-on takes your printer from it.</p>
+      <p class="note">Tested and printed on the A1 mini. Dual-nozzle models (H2D, H2D Pro, X2D, H2C) print with just one of their nozzles.</p>
     </div>
     <ul class="facts">
-      <li><strong>10 Bambu Lab printers</strong><span>A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S and H2S.</span></li>
+      <li><strong>14 Bambu Lab printers</strong><span>A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S, H2S, H2D, H2D Pro, X2D and H2C.</span></li>
+      <li><strong>Any other brand</strong><span>Creality, Prusa, Elegoo, Anycubic, Voron and more: with Marlin, Klipper or RepRapFirmware.</span></li>
       <li><strong>0.4 · 0.6 · 0.8 mm nozzles</strong><span>Line widths and flow rates adapt to the nozzle you choose.</span></li>
       <li><strong>Collision check</strong><span>Before exporting, it checks that the print head doesn't hit the part on the steepest sections.</span></li>
       <li><strong>Z speed check</strong><span>It warns you if your printer will slow down on the climbs and drops, compared with the A1 mini.</span></li>
@@ -635,14 +641,14 @@ section.cta.vdark .join-msg{color:#eceef3}
     <h2>sn_non-planar in 3 steps</h2>
     <div class="grid3">
       <div class="card"><div class="num">1</div><h3>Model your part</h3><p>You can also import an STL or any 3D file from your favorite software.</p></div>
-      <div class="card"><div class="num">2</div><h3>Pick your Bambu and generate the toolpath</h3><p>See it in the viewport before printing. All in real time!</p></div>
+      <div class="card"><div class="num">2</div><h3>Pick your printer and generate the toolpath</h3><p>See it in the viewport before printing. All in real time!</p></div>
       <div class="card"><div class="num">3</div><h3>Export the G-code</h3><p>1 click and it's off to your printer.<br>And that's it! Hit print :)</p></div>
     </div>
     <div class="grid2">
       <div>
         <h3>Who it's for</h3>
         <ul class="who">
-          <li>Makers with a Bambu Lab printer who want to stand out and be the only ones in their niche.</li>
+          <li>Makers with a 3D printer who want to stand out and be the only ones in their niche.</li>
           <li>Designers and 3D artists who already use Blender.</li>
           <li>People who make design pieces: lamps, vases, objects with organic surfaces.</li>
         </ul>
@@ -651,8 +657,8 @@ section.cta.vdark .join-msg{color:#eceef3}
         <h3>Requirements</h3>
         <ul class="who">
           <li>Blender 4.2 or later.</li>
-          <li>A single-nozzle Bambu Lab printer.</li>
-          <li>Bambu Studio installed, with your printer set up.</li>
+          <li>A 1.75 mm filament 3D printer: Bambu Lab or any other brand.</li>
+          <li>Bambu Studio with your printer set up, or a G-code sliced for your printer in your slicer.</li>
         </ul>
       </div>
     </div>
@@ -665,13 +671,13 @@ section.cta.vdark .join-msg{color:#eceef3}
     <h2>Frequently asked questions</h2>
     <dl class="faq">
       <dt>Does it work with my Bambu Lab?</dt>
-      <dd>Yes, if it's single-nozzle: A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S or H2S. The A1 mini is the one I've tested the most; on the others, watch the machine during your first print.</dd>
+      <dd>Yes: A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S and H2S, plus the dual-nozzle H2D, H2D Pro, X2D and H2C, which print with just one of their nozzles. The A1 mini is the one I've tested the most; on the others, watch the machine during your first print.</dd>
       <dt>How is it different from a slicer with a non-planar mode?</dt>
       <dd>Those slicers start from your part and bend some layers, mostly the top ones. sn_non-planar starts from the toolpath: you design the wall pattern, line by line. That's why it does things a slicer can't, like lattice with open cells or blobs.</dd>
       <dt>Do I need to know how to code or edit G-code?</dt>
       <dd>No. Everything is done from a panel in Blender, with sliders and a preview of the toolpath.</dd>
       <dt>Can I use it with other brands?</dt>
-      <dd>Not for now. I focused on Bambu Lab so every file comes out tested and ready to print.</dd>
+      <dd>Yes. Slice any part for your printer in OrcaSlicer, PrusaSlicer, Cura or Creality Print and load that G-code: the add-on reads the firmware, bed, max height, nozzle and start/end G-code from it. It works with Marlin, Klipper and RepRapFirmware and 1.75 mm filament; it's not for delta printers. The one I've tested the most is the A1 mini: on other brands, watch the machine during your first print.</dd>
     </dl>
   </div>
 </section>

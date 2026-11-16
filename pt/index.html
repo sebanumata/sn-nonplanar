@@ -11,7 +11,7 @@
 <link rel="alternate" hreflang="en" href="https://sebanumata.github.io/sn-nonplanar/en/">
 <link rel="alternate" hreflang="pt" href="https://sebanumata.github.io/sn-nonplanar/pt/">
 <link rel="alternate" hreflang="x-default" href="https://sebanumata.github.io/sn-nonplanar/">
-<title>sn_non-planar · Impressão não planar no Blender para Bambu Lab</title>
+<title>sn_non-planar · Impressão não planar no Blender para a sua impressora 3D</title>
 <style>
 /* Tipografías incluidas en la web para que se vea igual en todos los dispositivos (SIL OFL 1.1):
    Google Sans = títulos (fonts/OFL.txt) · Inter = textos, recuadro de lanzamiento y cuadro emergente (fonts/OFL-Inter.txt) */
@@ -432,6 +432,11 @@ section.cta.vdark .join-msg{color:#eceef3}
     <span class="chip">X1E</span>
     <span class="chip">P2S</span>
     <span class="chip">H2S</span>
+    <span class="chip">H2D</span>
+    <span class="chip">H2D Pro</span>
+    <span class="chip">X2D</span>
+    <span class="chip">H2C</span>
+    <span class="chip">+ outras marcas</span>
   </div>
 </div>
 
@@ -556,13 +561,14 @@ section.cta.vdark .join-msg{color:#eceef3}
 <section>
   <div class="wrap bambu">
     <div>
-      <span class="tag">Feito para Bambu Lab</span>
+      <span class="tag">Para a sua impressora</span>
       <h2>Sua impressora, seus perfis, sem configurar nada na mão</h2>
-      <p class="lead">O add-on lê sua impressora direto do Bambu Studio. Você escolhe o modelo, o bico e o filamento que já usa,<br>e o G-code sai configurado para a sua máquina.</p>
-      <p class="note">Testado e impresso na A1 mini. As Bambu de bico duplo (H2D, H2D Pro, X2D, H2C) ainda não são suportadas.</p>
+      <p class="lead">Se você tem uma Bambu Lab, o add-on lê sua impressora direto do Bambu Studio: você escolhe o modelo, o bico e o filamento que já usa.<br>Se você tem outra marca, carregue um G-code que já tenha fatiado no seu slicer e o add-on tira dele a sua impressora.</p>
+      <p class="note">Testado e impresso na A1 mini. As de bico duplo (H2D, H2D Pro, X2D, H2C) imprimem com só um dos seus bicos.</p>
     </div>
     <ul class="facts">
-      <li><strong>10 impressoras Bambu Lab</strong><span>A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S e H2S.</span></li>
+      <li><strong>14 impressoras Bambu Lab</strong><span>A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S, H2S, H2D, H2D Pro, X2D e H2C.</span></li>
+      <li><strong>Qualquer outra marca</strong><span>Creality, Prusa, Elegoo, Anycubic, Voron e outras: com firmware Marlin, Klipper ou RepRapFirmware.</span></li>
       <li><strong>Bicos de 0,4 · 0,6 · 0,8 mm</strong><span>As larguras de linha e as vazões se ajustam ao bico que você escolher.</span></li>
       <li><strong>Checagem de colisão</strong><span>Antes de exportar, confere se o cabeçote não encosta na peça nos trechos mais inclinados.</span></li>
       <li><strong>Checagem de velocidade em Z</strong><span>Avisa se a sua impressora vai frear nas subidas e descidas, comparada com a A1 mini.</span></li>
@@ -635,14 +641,14 @@ section.cta.vdark .join-msg{color:#eceef3}
     <h2>sn_non-planar em 3 passos</h2>
     <div class="grid3">
       <div class="card"><div class="num">1</div><h3>Modele sua peça</h3><p>Você também pode importar um STL ou qualquer arquivo 3D do seu programa favorito.</p></div>
-      <div class="card"><div class="num">2</div><h3>Escolha sua Bambu e gere o caminho</h3><p>Veja no viewport antes de imprimir. Tudo em tempo real!</p></div>
+      <div class="card"><div class="num">2</div><h3>Escolha sua impressora e gere o caminho</h3><p>Veja no viewport antes de imprimir. Tudo em tempo real!</p></div>
       <div class="card"><div class="num">3</div><h3>Exporte o G-code</h3><p>1 clique e você manda para a sua impressora.<br>E pronto! É só imprimir :)</p></div>
     </div>
     <div class="grid2">
       <div>
         <h3>Para quem é</h3>
         <ul class="who">
-          <li>Makers com impressora Bambu Lab que querem se diferenciar e ser os únicos no nicho.</li>
+          <li>Makers com impressora 3D que querem se diferenciar e ser os únicos no nicho.</li>
           <li>Designers e artistas 3D que já usam o Blender.</li>
           <li>Quem faz peças de design: luminárias, vasos, objetos com superfícies orgânicas.</li>
         </ul>
@@ -651,8 +657,8 @@ section.cta.vdark .join-msg{color:#eceef3}
         <h3>Requisitos</h3>
         <ul class="who">
           <li>Blender 4.2 ou superior.</li>
-          <li>Uma impressora Bambu Lab de um bico.</li>
-          <li>Bambu Studio instalado, com a sua impressora configurada.</li>
+          <li>Uma impressora 3D de filamento de 1,75 mm: Bambu Lab ou qualquer outra marca.</li>
+          <li>Bambu Studio com a sua impressora configurada, ou um G-code fatiado para a sua impressora no seu slicer.</li>
         </ul>
       </div>
     </div>
@@ -665,13 +671,13 @@ section.cta.vdark .join-msg{color:#eceef3}
     <h2>Perguntas frequentes</h2>
     <dl class="faq">
       <dt>Funciona com a minha Bambu Lab?</dt>
-      <dd>Sim, se for de um bico só: A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S ou H2S. A A1 mini é a que eu mais testei; nas outras, acompanhe a máquina na primeira impressão.</dd>
+      <dd>Sim: A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S e H2S, e também as de bico duplo H2D, H2D Pro, X2D e H2C, que imprimem com só um dos seus bicos. A A1 mini é a que eu mais testei; nas outras, acompanhe a máquina na primeira impressão.</dd>
       <dt>Qual a diferença para um slicer que tem modo não planar?</dt>
       <dd>Esses slicers partem da sua peça e curvam algumas camadas, principalmente as de cima. O sn_non-planar parte do caminho: o padrão da parede é você quem desenha, linha por linha. Por isso faz coisas que um slicer não consegue, como malha com células abertas ou gotas.</dd>
       <dt>Preciso saber programar ou editar G-code?</dt>
       <dd>Não. Tudo é feito a partir de um painel no Blender, com sliders e uma prévia do caminho.</dd>
       <dt>Posso usar com outras marcas?</dt>
-      <dd>Por enquanto não. Me concentrei na Bambu Lab para que cada arquivo saia testado e pronto para imprimir.</dd>
+      <dd>Sim. Fatie qualquer peça para a sua impressora no OrcaSlicer, PrusaSlicer, Cura ou Creality Print e carregue esse G-code: o add-on lê dele o firmware, a mesa, a altura máxima, o bico e o G-code de início e fim. Funciona com Marlin, Klipper e RepRapFirmware e filamento de 1,75 mm; não serve para impressoras delta. A que eu mais testei é a A1 mini: em outras marcas, acompanhe a máquina na primeira impressão.</dd>
     </dl>
   </div>
 </section>

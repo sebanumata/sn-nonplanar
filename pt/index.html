@@ -591,7 +591,6 @@ section.cta.vdark .join-msg{color:#eceef3}
       <div class="card"><h3>Malha no ar</h3><p>Fios que se cruzam e deixam células abertas de verdade, para vasos e cúpulas de luminária, ou qualquer peça sua.</p></div>
       <div class="card"><h3>Faixas</h3><p>Faixas inclinadas que seguem um padrão desenhado ou uma curva sua.<br>Olá, formas orgânicas que são impossíveis no slicer.</p></div>
       <div class="card"><h3>Gotas</h3><p>Colunas de gotas de plástico, uma sobre a outra. Um acabamento que parece feito à mão. Muito único!</p></div>
-      <div class="card"><h3>Sólido com camadas curvas</h3><p>Peças sólidas cujo topo copia a forma do modelo, sem degraus em cima.<br>Tchau, efeito escada!</p></div>
     </div>
     <h3 class="vsub">Uma paleta de caminhos</h3>
     <p class="vsubp">Cada cartão mostra a parede desenrolada, de frente, ou o caminho visto de cima. O ponto laranja é o bico na última camada.</p>
@@ -600,7 +599,7 @@ section.cta.vdark .join-msg{color:#eceef3}
       <div class="viz vpat"><canvas data-pat="malla" aria-label="Padrão Malha"></canvas><div class="vb"><span class="vchip">Células abertas</span><h3>Malha</h3><p>Cada fileira vai meia onda adiantada: só se tocam nos nós e a parede fica vazada.</p></div></div>
       <div class="viz vpat"><canvas data-pat="torsion" aria-label="Padrão Torção / Espinha de peixe"></canvas><div class="vb"><span class="vchip">Ondas em Z</span><h3>Torção / Espinha de peixe</h3><p>A onda gira camada a camada: hélices ou chevrons que sobem pela parede.</p></div></div>
       <div class="viz vpat"><canvas data-pat="franjas" aria-label="Padrão Faixas com base reta"></canvas><div class="vb"><span class="vchip">Ondas em Z</span><h3>Faixas com base reta</h3><p>Faixas com base plana e onda em cima; a faixa seguinte se apoia nas cristas.</p></div></div>
-      <div class="viz vpat"><canvas data-pat="guias" aria-label="Padrão Curvas guia"></canvas><div class="vb"><span class="vchip">Desenho à mão</span><h3>Curvas guia</h3><p>Curvas desenhadas ao redor da peça; as camadas se distribuem entre elas.</p></div></div>
+      <div class="viz vpat"><canvas data-pat="gotas" aria-label="Padrão Gotas"></canvas><div class="vb"><span class="vchip">Fluxo constante</span><h3>Gotas</h3><p>Colunas de gotas empilhadas, unidas por um fio fino. A extrusora nunca para.</p></div></div>
       <div class="viz vpat"><canvas data-pat="mapa" aria-label="Padrão Mapa de textura"></canvas><div class="vb"><span class="vchip">Imagem e ruído</span><h3>Mapa de textura</h3><p>Uma imagem ou um ruído decide onde a onda cresce e onde a parede fica lisa.</p></div></div>
       <div class="viz vpat"><canvas data-pat="radial" aria-label="Padrão Malha radial"></canvas><div class="vb"><span class="vchip top">Vista superior</span><h3>Malha radial</h3><p>A linha entra e sai do contorno, alternando a cada volta: trama tipo cesto.</p></div></div>
       <div class="viz vpat"><canvas data-pat="doble" aria-label="Padrão Parede dupla"></canvas><div class="vb"><span class="vchip top">Vista superior</span><h3>Parede dupla</h3><p>Duas paredes em um mesmo traço; as cristas de uma ficam entre as da outra.</p></div></div>
@@ -1315,6 +1314,10 @@ section.cta.vdark .join-msg{color:#eceef3}
       for(let i = 0; i <= 16; i++){ const l = []; for(let s = 0; s <= SM; s++){ const x = s / SM, z = i <= 8 ? Gg(x) * i / 8 : Gg(x) + (Tt(x) - Gg(x)) * (i - 8) / 8; l.push([x, z]); } lines.push(l); }
       const guides = [Gg, Tt].map(F => { const l = []; for(let s = 0; s <= SM; s++) l.push([s / SM, F(s / SM)]); return l; });
       return { lines, guides }; },
+    gotas: () => { const n = 8, rows = 7, lines = [], dots = [];
+      for(let i = 0; i < rows; i++){ const l = []; for(let s = 0; s <= SM; s++) l.push([s / SM, i * 1.25]); lines.push(l);
+        for(let k = 0; k < n; k++) dots.push([(k + 0.5) / n, i * 1.25]); }
+      return { lines, dots, thin: true }; },
     mapa: () => ({ lines: side((i, x) => { const blob = Math.exp(-(((x - .58) ** 2) / .03 + ((i - 8) / 4) ** 2)) + .7 * Math.exp(-(((x - .2) ** 2) / .012 + ((i - 3) / 2.4) ** 2)); return i + Math.min(.95, .08 + .9 * blob) * Math.sin(TAU * 7 * x); }, 15) }),
     radial: () => { const lines = []; for(let i = 0; i < 2; i++){ const l = []; for(let s = 0; s <= 360; s++){ const th = s / 360 * TAU, r = 1 + 0.11 * Math.sin(10 * th + i * Math.PI); l.push([r * Math.cos(th), r * Math.sin(th)]); } lines.push(l); } return { lines, top: true }; },
     doble: () => { const o = [], inr = []; for(let s = 0; s <= 360; s++){ const th = s / 360 * TAU; o.push([(1 + 0.06 * Math.sin(14 * th)) * Math.cos(th), (1 + 0.06 * Math.sin(14 * th)) * Math.sin(th)]); inr.push([(0.76 + 0.06 * Math.sin(14 * th + Math.PI)) * Math.cos(th), (0.76 + 0.06 * Math.sin(14 * th + Math.PI)) * Math.sin(th)]); }
@@ -1329,7 +1332,7 @@ section.cta.vdark .join-msg{color:#eceef3}
   });
   function drawPat(o, t){
     const { ctx, w, h } = fit(o.c); ctx.clearRect(0, 0, w, h);
-    const { lines, guides, top } = o.data;
+    const { lines, guides, top, dots, thin } = o.data;
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
     for(const l of lines) for(const p of l){ x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }
     const m = 16; let X, Y;
@@ -1340,9 +1343,11 @@ section.cta.vdark .join-msg{color:#eceef3}
     lines.forEach((l, i) => {
       const a = top ? (i === lines.length - 1 ? 1 : .75) : 0.35 + 0.65 * (i / (lines.length - 1));
       ctx.strokeStyle = top && o.radial && i === 0 ? `rgba(255,140,60,${a})` : `rgba(234,118,0,${a})`;
-      ctx.lineWidth = top ? Math.max(2.5, w / 70) : Math.max(1.6, w / 120);
+      ctx.lineWidth = top ? Math.max(2.5, w / 70) : thin ? 1 : Math.max(1.6, w / 120);
       ctx.beginPath(); l.forEach((p, j) => j ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.stroke();
     });
+    if(dots){ const r = Math.max(4, Math.min(w / 34, Math.abs(Y(0) - Y(1.25)) * 0.5)), ys = dots.map(p => p[1]), ymax = Math.max(...ys);
+      for(const p of dots){ ctx.fillStyle = `rgba(234,118,0,${0.4 + 0.6 * p[1] / ymax})`; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), r, 0, TAU); ctx.fill(); } }
     if(guides){ ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(159,216,255,.95)'; ctx.lineWidth = 1.6;
       for(const l of guides){ ctx.beginPath(); l.forEach((p, j) => j ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.stroke(); } ctx.restore(); }
     const last = lines[lines.length - 1], acc = o.acc, L = acc[acc.length - 1];

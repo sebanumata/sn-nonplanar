@@ -44,6 +44,8 @@ h3{font-size:22px;margin-bottom:8px}
 p{margin:0}
 .mut{color:var(--mut)}
 .lead{font-size:20px;color:var(--mut);max-width:56ch;margin-top:20px}
+.vmode{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:18px;font-size:16px;color:var(--mut);max-width:56ch}
+.vmode-chip{display:inline-block;border:1.5px solid var(--acc);color:var(--acc);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:18px}
 
 /* header */
@@ -193,6 +195,7 @@ body{overflow-x:clip}
   .hero-txt{display:contents}
   .hero-txt .tag{order:1}
   .hero-txt h1{order:2}
+  .hero-txt .vmode{order:2;margin-top:12px;font-size:15px}
   .hero-txt .lead{order:3}
   .launch{order:4;margin-top:24px;padding:20px 18px}
   .hero-txt form.join{order:5}
@@ -397,6 +400,7 @@ section.cta.vdark .join-msg{color:#eceef3}
     <div class="hero-txt">
       <span class="tag">Non-planar printing, now inside Blender.</span>
       <h1 class="hero-h1"><span>Blender add-on</span> <span class="nw">for 3D printing</span></h1>
+      <p class="vmode"><span class="vmode-chip">Vase Mode</span> <span>For now it's for vase mode only: one continuous spiral wall, from the base to the rim.</span></p>
       <p class="lead">sn_non-planar generates your part's G-code without leaving Blender, ready to print. Smoother surfaces, stronger parts and shapes a regular slicer just can't make.</p>
       <form class="join" data-sn-form="" data-origen="landing-arriba">
         <input type="email" name="email" required="" placeholder="Your email">
@@ -657,6 +661,7 @@ section.cta.vdark .join-msg{color:#eceef3}
         <h3>Requirements</h3>
         <ul class="who">
           <li>Blender 4.2 or later.</li>
+          <li>Vase mode parts: for now it's the only print mode.</li>
           <li>A 1.75 mm filament 3D printer: Bambu Lab or any other brand.</li>
           <li>Bambu Studio with your printer set up, or a G-code sliced for your printer in your slicer.</li>
         </ul>
@@ -670,6 +675,8 @@ section.cta.vdark .join-msg{color:#eceef3}
     <span class="tag">Questions</span>
     <h2>Frequently asked questions</h2>
     <dl class="faq">
+      <dt>Does it print solid parts, with infill?</dt>
+      <dd>Not yet: this version is for vase mode only, one continuous spiral wall, no infill. Ideal for vases, planters, lamps and hollow pieces.</dd>
       <dt>Does it work with my Bambu Lab?</dt>
       <dd>Yes: A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S and H2S, plus the dual-nozzle H2D, H2D Pro, X2D and H2C, which print with just one of their nozzles. The A1 mini is the one I've tested the most; on the others, watch the machine during your first print.</dd>
       <dt>How is it different from a slicer with a non-planar mode?</dt>

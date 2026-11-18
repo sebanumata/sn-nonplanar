@@ -45,6 +45,8 @@ h3{font-size:22px;margin-bottom:8px}
 p{margin:0}
 .mut{color:var(--mut)}
 .lead{font-size:20px;color:var(--mut);max-width:56ch;margin-top:20px}
+.vmode{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:18px;font-size:16px;color:var(--mut);max-width:56ch}
+.vmode-chip{display:inline-block;border:1.5px solid var(--acc);color:var(--acc);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:18px}
 
 /* header */
@@ -194,6 +196,7 @@ body{overflow-x:clip}
   .hero-txt{display:contents}
   .hero-txt .tag{order:1}
   .hero-txt h1{order:2}
+  .hero-txt .vmode{order:2;margin-top:12px;font-size:15px}
   .hero-txt .lead{order:3}
   .launch{order:4;margin-top:24px;padding:20px 18px}
   .hero-txt form.join{order:5}
@@ -398,6 +401,7 @@ section.cta.vdark .join-msg{color:#eceef3}
     <div class="hero-txt">
       <span class="tag">La impresión no planar, ahora dentro de Blender.</span>
       <h1 class="hero-h1"><span>Blender Addon</span> <span class="nw">para impresión 3D</span></h1>
+      <p class="vmode"><span class="vmode-chip">Vase Mode</span> <span>Por ahora es solo para vase mode: una pared continua en espiral, de la base al borde.</span></p>
       <p class="lead">sn_non-planar genera el G-code de tu pieza sin salir de Blender, listo para imprimir. Superficies más suaves, piezas más fuertes y formas que con un slicer común no salen.</p>
       <form class="join" data-sn-form="" data-origen="landing-arriba">
         <input type="email" name="email" required="" placeholder="Tu email">
@@ -658,6 +662,7 @@ section.cta.vdark .join-msg{color:#eceef3}
         <h3>Requisitos</h3>
         <ul class="who">
           <li>Blender 4.2 o superior.</li>
+          <li>Piezas en vase mode: por el momento es el único modo de impresión.</li>
           <li>Una impresora 3D de filamento de 1,75 mm: Bambu Lab o cualquier otra marca.</li>
           <li>Bambu Studio con tu impresora configurada, o un G-code laminado para tu impresora en tu slicer.</li>
         </ul>
@@ -671,6 +676,8 @@ section.cta.vdark .join-msg{color:#eceef3}
     <span class="tag">Preguntas</span>
     <h2>Preguntas frecuentes</h2>
     <dl class="faq">
+      <dt>¿Imprime piezas sólidas, con relleno?</dt>
+      <dd>Por ahora no: esta versión es solo para vase mode, una pared continua en espiral, sin relleno. Ideal para jarrones, macetas, lámparas y piezas huecas.</dd>
       <dt>¿Funciona con mi Bambu Lab?</dt>
       <dd>Sí: A1 mini, A1, A2L, P1P, P1S, X1, X1 Carbon, X1E, P2S y H2S, y también las de doble boquilla H2D, H2D Pro, X2D y H2C, que imprimen con una sola de sus boquillas. La A1 mini es la que más probé; en las otras, hacé la primera impresión mirando la máquina.</dd>
       <dt>¿Qué diferencia hay con un slicer que tiene modo no planar?</dt>

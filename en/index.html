@@ -147,6 +147,7 @@ ul.who li{margin:6px 0}
 /* about + cta */
 .about{display:grid;grid-template-columns:200px 1fr;gap:40px;align-items:start}
 .about p{font-size:19px;max-width:62ch}
+.about-txt p+p{margin-top:1em}
 .cta{text-align:center}
 .cta h2{margin:0 auto;max-width:20ch}
 .cta form.join{margin:32px auto 0}
@@ -684,9 +685,11 @@ section.cta.vdark .join-msg{color:#eceef3}
 <section>
   <div class="wrap about">
     <h3>About me</h3>
-    <p>I'm Seba Numata, a 3D and VFX artist. I've been using Blender for over 5 years to make pretty much anything you can imagine.</p>
-    <p>I've always loved experimenting with parametric/procedural and organic design, making the most of all the powerful tools Blender gives us.</p>
-    <p>sn_non-planar opens up new ways to 3D print, shapes no slicer can achieve. And it's really simple: you export the G-Code straight from Blender in no time.</p>
+    <div class="about-txt">
+      <p>I'm Seba Numata, a 3D and VFX artist. I've been using Blender for over 5 years to make pretty much anything you can imagine.</p>
+      <p>I've always loved experimenting with parametric/procedural and organic design, making the most of all the powerful tools Blender gives us.</p>
+      <p>sn_non-planar opens up new ways to 3D print, shapes no slicer can achieve. And it's really simple: you export the G-Code straight from Blender in no time.</p>
+    </div>
   </div>
 </section>
 

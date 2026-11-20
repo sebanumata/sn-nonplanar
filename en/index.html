@@ -194,20 +194,23 @@ body{overflow-x:clip}
   .logo{font-size:19px}
   header a.btn{padding:8px 14px;font-size:14px}
 
-  /* hero: título → texto → lanzamiento → formulario */
+  /* hero: título + Vase Mode → lanzamiento → formulario → textos explicativos */
   .hero{padding:26px 0 44px}
   .hero-grid{display:flex;flex-direction:column;gap:0;align-items:stretch}
   .hero-txt .tag{align-self:flex-start}
   .hero-txt{display:contents}
   .hero-txt .tag{order:1}
   .hero-txt h1{order:2}
-  .hero-txt .vmode{order:2;margin-top:12px;font-size:15px}
-  .hero-txt .lead{order:3}
-  .launch{order:4;margin-top:24px;padding:20px 18px}
-  .hero-txt .social{order:5;margin-top:26px;justify-content:center;font-size:16px;text-align:left}
-  .hero-txt form.join{order:5}
+  .hero-txt .vmode{display:contents}
+  .hero-txt .vmode-chip{order:2;align-self:flex-start;margin-top:14px}
+  .launch{order:3;margin-top:24px;padding:20px 18px}
+  .hero-txt .social{order:4;margin-top:26px;justify-content:center;font-size:16px;text-align:left}
+  .hero-txt form.join{order:4}
+  .hero-txt .join-msg{order:4}
   .hero-txt .social + form.join{margin-top:12px}
-  .hero-txt .under{order:6}
+  .hero-txt .under{order:5}
+  .hero-txt .vmode-txt{order:6;margin-top:28px;font-size:15px;color:var(--mut)}
+  .hero-txt .lead{order:7}
   .launch .tag{margin-bottom:6px}
   .launch-date{font-size:clamp(40px,13vw,54px)}
   .launch-sub{font-size:14px;margin-top:8px}
@@ -409,7 +412,7 @@ section.cta.vdark .join-msg{color:#eceef3}
     <div class="hero-txt">
       <span class="tag">Non-planar printing, now inside Blender.</span>
       <h1 class="hero-h1"><span>Blender add-on</span> <span class="nw">for 3D printing</span></h1>
-      <p class="vmode"><span class="vmode-chip">Vase Mode</span> <span>For now it's for vase mode only: one continuous spiral wall, from the base to the rim. Infill mode comes in a future version.</span></p>
+      <p class="vmode"><span class="vmode-chip">Vase Mode</span> <span class="vmode-txt">For now it's for vase mode only: one continuous spiral wall, from the base to the rim. Infill mode comes in a future version.</span></p>
       <p class="lead">sn_non-planar generates your part's G-code without leaving Blender, ready to print. Smoother surfaces, stronger parts and shapes a regular slicer just can't make.</p>
       <p class="social"><span class="social-dot" aria-hidden="true"></span><span><b>+300 people</b> already signed up. Join them!</span></p>
       <form class="join" data-sn-form="" data-origen="landing-arriba">

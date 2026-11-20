@@ -72,6 +72,12 @@ form.join{display:flex;gap:8px;margin-top:32px;max-width:480px}
 form.join input{flex:1;font:inherit;padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
 .btn{display:inline-block;font:inherit;font-weight:600;padding:14px 20px;border-radius:10px;border:0;background:var(--acc);color:var(--acc-ink);text-decoration:none;cursor:pointer;white-space:nowrap}
 .under{font-size:14px;color:var(--mut);margin-top:10px}
+/* "+300 personas ya se anotaron", arriba del formulario de arriba */
+.social{display:flex;align-items:center;gap:12px;margin-top:36px;font-size:18px;line-height:1.35;color:var(--ink)}
+.social b{color:var(--acc);font-weight:700}
+.social-dot{flex:none;width:10px;height:10px;border-radius:50%;background:#22c55e;animation:snPulso 2s ease-out infinite}
+@keyframes snPulso{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.social + form.join{margin-top:14px}
 .hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
 form.join[hidden]{display:none}
 .join-msg{margin-top:14px;font-weight:600}
@@ -198,7 +204,9 @@ body{overflow-x:clip}
   .hero-txt .vmode{order:2;margin-top:12px;font-size:15px}
   .hero-txt .lead{order:3}
   .launch{order:4;margin-top:24px;padding:20px 18px}
+  .hero-txt .social{order:5;margin-top:26px;justify-content:center;font-size:16px;text-align:left}
   .hero-txt form.join{order:5}
+  .hero-txt .social + form.join{margin-top:12px}
   .hero-txt .under{order:6}
   .launch .tag{margin-bottom:6px}
   .launch-date{font-size:clamp(40px,13vw,54px)}
@@ -379,6 +387,7 @@ section.cta.vdark .join-msg{color:#eceef3}
   .crack.full,.crack.short{animation:none;stroke-dashoffset:0}
   .stopmark{animation:none;opacity:1}
   .vgcode div{animation:none}
+  .social-dot{animation:none}
 }
 
 .lang{margin-left:auto;margin-right:12px;display:flex;gap:2px;font-size:13px;font-weight:600;letter-spacing:.04em}.lang a{color:var(--mut);text-decoration:none;padding:6px 7px;border-radius:8px}.lang a:hover{color:var(--ink)}.lang a[aria-current]{color:var(--ink);background:var(--card)}header .logo{white-space:nowrap}@media (max-width:600px){.lang{margin-right:8px;font-size:12px}.lang a{padding:5px 5px}}
@@ -402,10 +411,11 @@ section.cta.vdark .join-msg{color:#eceef3}
       <h1 class="hero-h1"><span>Blender add-on</span> <span class="nw">for 3D printing</span></h1>
       <p class="vmode"><span class="vmode-chip">Vase Mode</span> <span>For now it's for vase mode only: one continuous spiral wall, from the base to the rim. Infill mode comes in a future version.</span></p>
       <p class="lead">sn_non-planar generates your part's G-code without leaving Blender, ready to print. Smoother surfaces, stronger parts and shapes a regular slicer just can't make.</p>
+      <p class="social"><span class="social-dot" aria-hidden="true"></span><span><b>+300 people</b> already signed up. Join them!</span></p>
       <form class="join" data-sn-form="" data-origen="landing-arriba">
         <input type="email" name="email" required="" placeholder="Your email">
         <input type="text" name="sitio_web" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <button class="btn" type="submit">Get early access</button>
+        <button class="btn" type="submit">I want it!</button>
       </form>
       <p class="under">Be among the first to try it. Special launch price for the list: 50% OFF</p>
     </div>

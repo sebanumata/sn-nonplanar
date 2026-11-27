@@ -60,12 +60,21 @@ header a.btn{padding:9px 16px;font-size:14px}
 .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
 .launch{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:36px 32px}
 .launch .tag{margin-bottom:10px}
-.launch-date{font-family:var(--serif);font-size:clamp(44px,6vw,76px);line-height:1;color:var(--acc);letter-spacing:-.02em}
-.launch-sub{color:var(--mut);margin-top:12px}
-.count{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:28px}
-.count div{border:1px solid var(--line);border-radius:10px;padding:14px 6px;text-align:center}
-.count b{display:block;font-family:var(--serif);font-size:38px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
-.count small{display:block;font-size:12px;color:var(--mut);margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+/* recuadro de lanzamiento: siempre oscuro, cuenta regresiva estilo reloj de paletas */
+.launch{background:#141414;border-color:#262626;color:#f2f2f2;text-align:center;container-type:inline-size}
+.launch .tag{color:#fb923c}
+.fl-title{font-family:var(--serif);font-weight:700;font-size:clamp(40px,5vw,60px);line-height:1;letter-spacing:-.01em;color:#ededed}
+.fl{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,2vw,22px);margin-top:30px}
+.fl small{display:block;margin-top:14px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ededed}
+.fl-tile{position:relative;display:grid;place-items:center;aspect-ratio:1/1;border-radius:12px;perspective:300px;
+  background:linear-gradient(#2b2b2b 0 50%,#232323 50% 100%);box-shadow:0 12px 26px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07)}
+.fl-tile::after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:rgba(8,8,8,.85);box-shadow:0 1px 0 rgba(255,255,255,.05)}
+.fl-tile::before{content:"";position:absolute;left:-5px;right:-5px;top:50%;height:18px;margin-top:-9px;z-index:1;
+  background:linear-gradient(90deg,#9a9a9a 0,#5c5c5c 6px,transparent 6px,transparent calc(100% - 6px),#5c5c5c calc(100% - 6px),#9a9a9a 100%);border-radius:3px}
+.fl-tile b{font-family:var(--serif);font-weight:700;font-size:14cqi;line-height:1;color:#f2f2f2;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.fl-tile b.flip{animation:flFlip .45s ease-out}
+@keyframes flFlip{0%{transform:rotateX(75deg);opacity:.2}100%{transform:rotateX(0);opacity:1}}
+.fl-sub{margin-top:26px;font-size:14px;color:#9c9c9c}
 .launch,.launch .launch-date,.launch .count b,.launch .launch-done,dialog.aviso,dialog.aviso h3{font-family:var(--sans)}
 .launch-done{font-family:var(--serif);font-size:32px;margin-top:24px}
 form.join{display:flex;gap:8px;margin-top:32px;max-width:480px}
@@ -212,12 +221,12 @@ body{overflow-x:clip}
   .hero-txt .vmode-txt{order:6;margin-top:28px;font-size:15px;color:var(--mut)}
   .hero-txt .lead{order:7}
   .launch .tag{margin-bottom:6px}
-  .launch-date{font-size:clamp(40px,13vw,54px)}
-  .launch-sub{font-size:14px;margin-top:8px}
-  .count{gap:8px;margin-top:16px}
-  .count div{padding:10px 2px}
-  .count b{font-size:28px}
-  .count small{font-size:10px}
+  .fl-title{font-size:clamp(36px,11vw,46px)}
+  .fl{gap:10px;margin-top:20px}
+  .fl-tile{border-radius:9px}
+  .fl-tile::before{left:-3px;right:-3px;height:12px;margin-top:-6px;background:linear-gradient(90deg,#9a9a9a 0,#5c5c5c 4px,transparent 4px,transparent calc(100% - 4px),#5c5c5c calc(100% - 4px),#9a9a9a 100%)}
+  .fl small{font-size:11px;margin-top:9px;letter-spacing:.05em}
+  .fl-sub{margin-top:16px;font-size:13px}
 
   /* formularios a todo el ancho, fáciles de tocar */
   form.join{flex-direction:column;margin-top:20px;max-width:none}
@@ -391,6 +400,7 @@ section.cta.vdark .join-msg{color:#eceef3}
   .stopmark{animation:none;opacity:1}
   .vgcode div{animation:none}
   .social-dot{animation:none}
+  .fl-tile b.flip{animation:none}
 }
 
 .lang{margin-left:auto;margin-right:12px;display:flex;gap:2px;font-size:13px;font-weight:600;letter-spacing:.04em}.lang a{color:var(--mut);text-decoration:none;padding:6px 7px;border-radius:8px}.lang a:hover{color:var(--ink)}.lang a[aria-current]{color:var(--ink);background:var(--card)}header .logo{white-space:nowrap}@media (max-width:600px){.lang{margin-right:8px;font-size:12px}.lang a{padding:5px 5px}}
@@ -424,14 +434,14 @@ section.cta.vdark .join-msg{color:#eceef3}
     </div>
     <div class="launch">
       <span class="tag">Launch</span>
-      <p class="launch-date">12/12 – 12:12</p>
-      <p class="launch-sub">Saturday, December 12, 12:12 p.m. (Argentina time, UTC−3)</p>
-      <div class="count" id="sn-count" data-launch="2026-12-12T12:12:00-03:00">
-        <div><b id="cd-d">--</b><small>days</small></div>
-        <div><b id="cd-h">--</b><small>hours</small></div>
-        <div><b id="cd-m">--</b><small>min</small></div>
-        <div><b id="cd-s">--</b><small>sec</small></div>
+      <p class="fl-title">12/12 – 12:12</p>
+      <div class="fl" id="sn-count" data-launch="2026-12-12T12:12:00-03:00">
+        <div><span class="fl-tile"><b id="cd-d">--</b></span><small>days</small></div>
+        <div><span class="fl-tile"><b id="cd-h">--</b></span><small>hours</small></div>
+        <div><span class="fl-tile"><b id="cd-m">--</b></span><small>min</small></div>
+        <div><span class="fl-tile"><b id="cd-s">--</b></span><small>sec</small></div>
       </div>
+      <p class="fl-sub">Saturday, December 12, 12:12 p.m. (Argentina time, UTC−3)</p>
       <p class="launch-done" id="cd-done" hidden="">It's out!</p>
     </div>
   </div>
@@ -747,13 +757,22 @@ section.cta.vdark .join-msg{color:#eceef3}
   if(!box) return;
   const end = new Date(box.dataset.launch).getTime();
   const two = n => String(n).padStart(2, '0');
+  // cambia el número y, si cambió, lo hace girar como una paleta
+  function set(id, v){
+    const el = document.getElementById(id);
+    if(el.textContent === v) return;
+    const primera = el.textContent === '--';
+    el.textContent = v;
+    if(primera) return;
+    el.classList.remove('flip'); void el.offsetWidth; el.classList.add('flip');
+  }
   function tick(){
     let s = Math.max(0, Math.floor((end - Date.now()) / 1000));
     if(s === 0){ box.hidden = true; document.getElementById('cd-done').hidden = false; return; }
-    document.getElementById('cd-d').textContent = Math.floor(s / 86400);
-    document.getElementById('cd-h').textContent = two(Math.floor(s % 86400 / 3600));
-    document.getElementById('cd-m').textContent = two(Math.floor(s % 3600 / 60));
-    document.getElementById('cd-s').textContent = two(s % 60);
+    set('cd-d', two(Math.floor(s / 86400)));
+    set('cd-h', two(Math.floor(s % 86400 / 3600)));
+    set('cd-m', two(Math.floor(s % 3600 / 60)));
+    set('cd-s', two(s % 60));
     setTimeout(tick, 1000 - Date.now() % 1000);
   }
   tick();

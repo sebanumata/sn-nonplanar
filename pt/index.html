@@ -84,6 +84,12 @@ form.join input{flex:1;font:inherit;padding:14px 16px;border-radius:10px;border:
 .social-dot{flex:none;width:10px;height:10px;border-radius:50%;background:#22c55e;animation:snPulso 2s ease-out infinite}
 @keyframes snPulso{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 .social + form.join{margin-top:14px}
+/* fotos de piezas impresas, antes de la animación */
+.prints{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:32px 0 30px}
+.prints figure{margin:0}
+.prints img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;background:#111}
+.prints figcaption{margin-top:10px;text-align:center;font-weight:600;font-size:15px}
+.prints .exp{display:block;color:var(--mut);font-weight:400;font-size:13px}
 .hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
 form.join[hidden]{display:none}
 .join-msg{margin-top:14px;font-weight:600}
@@ -214,6 +220,11 @@ body{overflow-x:clip}
   .hero-txt form.join{order:4}
   .hero-txt .join-msg{order:4}
   .hero-txt .social + form.join{margin-top:12px}
+  .prints{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:44%;overflow-x:auto;scroll-snap-type:x mandatory;
+    margin:22px -24px 24px;padding:0 24px;scroll-padding:0 24px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .prints::-webkit-scrollbar{display:none}
+  .prints figure{scroll-snap-align:start}
+  .prints figcaption{font-size:14px}
   .hero-txt .under{order:5}
   .hero-txt .vmode-txt{order:6;margin-top:28px;font-size:15px;color:var(--mut)}
   .hero-txt .lead{order:7}
@@ -470,6 +481,13 @@ section.cta.vdark .join-msg{color:#eceef3}
     <span class="tag">Veja como imprime</span>
     <h2>Um bico que sobe e desce</h2>
     <p class="lead">Escolha um caminho e veja a peça se formar. No planar o bico sobe aos saltos; com o sn_non-planar ele se move em X, Y e Z ao mesmo tempo.</p>
+    <div class="prints">
+      <figure><img src="../img/impreso-paralelas.webp" alt="" loading="lazy"><figcaption>Paralelas</figcaption></figure>
+      <figure><img src="../img/impreso-malla.webp" alt="" loading="lazy"><figcaption>Malha <span class="exp">(experimental)</span></figcaption></figure>
+      <figure><img src="../img/impreso-malla-radial.webp" alt="" loading="lazy"><figcaption>Malha radial</figcaption></figure>
+      <figure><img src="../img/impreso-bandas.webp" alt="" loading="lazy"><figcaption>Faixas</figcaption></figure>
+      <figure><img src="../img/impreso-gotas.webp" alt="" loading="lazy"><figcaption>Gotas</figcaption></figure>
+    </div>
     <div class="viz vstage">
       <canvas id="hero3d" aria-label="Animação de um bico imprimindo um vaso com o caminho escolhido"></canvas>
       <div class="vread" id="heroRead" data-gen=""></div>
